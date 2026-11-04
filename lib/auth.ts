@@ -1,5 +1,6 @@
 import 'server-only';
 import { redirect } from 'next/navigation';
+import { connection } from 'next/server';
 import { cache } from 'react';
 import { ROLE_HOME, type Role } from '@/lib/roles';
 import { adminClient } from '@/lib/supabase/admin';
@@ -18,8 +19,13 @@ export type SessionUser = {
 /**
  * Lớp truy cập dữ liệu (DAL) cho trang: đọc phiên từ cookie rồi lấy hồ sơ.
  * Đọc cookie nên chỉ gọi bên trong <Suspense>. `cache` gộp các lần gọi trong cùng một request.
+ *
+ * `connection()` trước tiên: Supabase so hạn token với giờ hiện tại, và các trang sau phiên đều hiện
+ * dữ liệu theo thời gian (đếm ngược, giờ check-in, số dư). Partial prefetching mặc định prerender cả
+ * phần sau cookies() vào App Shell, nên mọi thứ đọc phiên phải chờ request thật.
  */
 export const getSessionUser = cache(async (): Promise<SessionUser | null> => {
+  await connection();
   const supabase = await createClient();
   const { data, error } = await supabase.auth.getClaims();
   const userId = data?.claims?.sub;
