@@ -1,0 +1,46 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.*
+.yarn/*
+
+# Next.js
+.next/
+out/
+build/
+*.tsbuildinfo
+next-env.d.ts
+
+# Vercel
+.vercel
+
+# Biến môi trường: chỉ commit .env.example
+.env
+.env.*
+!.env.example
+
+# Supabase CLI
+supabase/.branches
+supabase/.temp
+supabase/.env
+
+# Kiểm thử
+coverage/
+playwright-report/
+test-results/
+blob-report/
+playwright/.cache/
+
+# Log
+*.log
+
+# Hệ điều hành, trình soạn thảo
+.DS_Store
+Thumbs.db
+*.pem
+.idea/
+.vscode/*
+!.vscode/extensions.json
+
+# Claude Code: thiết lập riêng từng máy
+.claude/settings.local.json
