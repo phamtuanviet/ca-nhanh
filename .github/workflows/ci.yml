@@ -31,13 +31,13 @@ jobs:
           DEMO_MODE: 'true'
 
   db-test:
-    name: Kiểm thử CSDL (92 kiểm tra)
+    name: Kiểm thử CSDL (103 kiểm tra)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - name: Migration giống bản đã kiểm thử trong docs/sql
         run: |
-          for n in 1 2 3 4; do
+          for n in 1 2 3 4 5; do
             cmp docs/sql/000${n}_*.sql supabase/migrations/2026110400000${n}_*.sql
           done
       - name: Chạy docs/sql/test/run_tests.sh
@@ -46,7 +46,7 @@ jobs:
           if grep -qE 'CHECK FAILED|ERROR' sql-test.log; then echo "Có kiểm tra thất bại"; exit 1; fi
           passed=$(grep -c '^ok' sql-test.log)
           echo "Đạt $passed kiểm tra"
-          test "$passed" -ge 92
+          test "$passed" -ge 103
 
   e2e:
     name: E2E (Supabase cục bộ + Playwright)
@@ -76,6 +76,8 @@ jobs:
         run: npm run race
       - name: Playwright
         run: npx playwright test
+      - name: Bất biến tiền I1–I5 sau E2E (04 §6.3)
+        run: npm run ledger:check
       - name: Log server khi lỗi
         if: failure()
         run: tail -n 200 server.log
