@@ -367,6 +367,8 @@ supabase
 
 Ghi chú: `postgres_changes` kiểm tra RLS cho từng người đăng ký nên phù hợp quy mô demo. Khi mở rộng, chuyển sang Broadcast phát từ trigger, kênh theo khu vực (§12).
 
+**Phải nạp JWT trước khi join kênh.** supabase-js lấy token cho Realtime qua callback bất đồng bộ, nên kênh đầu tiên mở trên một kết nối mới có thể join bằng khóa publishable (vai trò anon): kênh vẫn báo `SUBSCRIBED` nhưng RLS chặn mọi sự kiện. Lỗi chỉ lộ ở bản production (React StrictMode ở dev đăng ký kênh hai lần nên che mất). `lib/realtime/use-realtime.ts` gọi `client.auth.getSession()` rồi `client.realtime.setAuth()` một lần cho cả trang trước khi `subscribe()`.
+
 ---
 
 ## 7. Bảo mật và quyền riêng tư
