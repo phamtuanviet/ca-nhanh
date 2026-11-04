@@ -114,3 +114,37 @@
     animation: none !important;
   }
 }
+
+/* Ghim ca trên bản đồ Khám phá (P3-01): nhãn tiền công, ca gấp màu nghệ, đuôi chỉ đúng vị trí quán */
+.cn-map-shift {
+  position: absolute;
+  transform: translate(-50%, calc(-100% - 7px));
+  padding: 4px 10px;
+  border: 2px solid var(--surface);
+  border-radius: 999px;
+  background: var(--primary);
+  box-shadow: var(--shadow-pop);
+  color: var(--on-primary);
+  font: 700 12px/1.25 var(--font-sans);
+  white-space: nowrap;
+}
+.cn-map-shift::after {
+  position: absolute;
+  bottom: -7px;
+  left: 50%;
+  border: 5px solid transparent;
+  border-top-color: var(--primary);
+  transform: translateX(-50%);
+  content: '';
+}
+.cn-map-shift--urgent {
+  background: var(--spark);
+  color: var(--on-spark);
+}
+.cn-map-shift--urgent::after {
+  border-top-color: var(--spark);
+}
+.leaflet-marker-icon:focus-visible .cn-map-shift {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+}
