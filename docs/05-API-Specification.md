@@ -835,6 +835,8 @@ export function vietQrImageUrl(amount: number, transferNote: string) {
 | `RATE_LIMITED` | 429 | Thao tác quá nhanh, thử lại sau ít giây | API |
 | `INTERNAL_ERROR` | 500 | Có lỗi xảy ra, vui lòng thử lại | API |
 
+CSDL còn ném `WALLET_NOT_FOUND` khi bất biến ví bị vi phạm. Đây là lỗi nội bộ nên API trả về `500 INTERNAL_ERROR`. `tests/unit/errors.test.ts` đối chiếu bảng trên với `lib/errors.ts` và với mọi mã mà các hàm SQL ném ra.
+
 ---
 
 ## 10. Mẫu cài đặt Route Handler
@@ -876,7 +878,7 @@ import { adminClient } from '@/lib/supabase/admin';
 import { fromPostgrest } from '@/lib/errors';
 
 export const POST = (req: Request, ctx: { params: Promise<{ shiftId: string }> }) =>
-  handle(async () => {
+  handle(req, async () => {
     const user = await requireUser(req, { role: 'worker' });             // cookie hoặc Bearer; 401/403
     const { shiftId } = z.object({ shiftId: z.string().uuid() }).parse(await ctx.params);
     const { data, error } = await adminClient()                          // secret key, chỉ ở server
@@ -886,7 +888,7 @@ export const POST = (req: Request, ctx: { params: Promise<{ shiftId: string }> }
   });
 ```
 
-`handle()` bắt `ZodError` → `400 VALIDATION_ERROR` (kèm danh sách trường), `ApiError` → mã HTTP tương ứng, lỗi khác → `500` và ghi log kèm `request_id`.
+`handle(req, fn)` đọc hoặc sinh `X-Request-Id`, bắt `ZodError` → `400 VALIDATION_ERROR` (kèm danh sách trường), `ApiError` → mã HTTP tương ứng, lỗi khác → `500` và ghi log kèm `request_id`.
 
 ---
 
