@@ -9,9 +9,9 @@
 | Phần | Trạng thái |
 |---|---|
 | Tài liệu thiết kế 01–07 | Bản 1.0 |
-| CSDL: 17 bảng, 53 hàm, RLS, tác vụ định kỳ | Đã kiểm thử, đạt 92/92 |
+| CSDL: 17 bảng, 53 hàm, RLS, tác vụ định kỳ | Đã kiểm thử, đạt 103/103 |
 | Hệ thiết kế: màu, chữ, component, chuyển động, ảnh | Xong |
-| Ứng dụng Next.js | Phase 0 và Phase 1 xong trên máy: nạp ví VietQR, đăng ca có ký quỹ, tìm ca, nhận ca an toàn khi tranh chỗ, realtime. Chưa deploy |
+| Ứng dụng Next.js | Phase 0–3 xong trên máy: nạp ví VietQR, đăng ca có ký quỹ, tìm ca, nhận ca an toàn khi tranh chỗ, realtime; kiosk QR, check-in/out có geofence, duyệt giờ công và quyết toán ngay, ví người làm và rút tiền, hủy ca và điểm phạt, công cụ tua giờ demo; bản đồ ca, đánh giá hai chiều, dashboard KPI, trang quản trị, mời người quen, đẩy ca gấp, hồ sơ năng lực, PWA. Chưa deploy |
 
 ## Cấu trúc repo
 
@@ -21,9 +21,9 @@ components/  ui/ (shadcn/ui theo thương hiệu), cn/ (component Ca Nhanh), lay
 lib/         supabase/ (client trình duyệt, server, secret), api.ts, errors.ts, auth.ts, roles.ts
 proxy.ts     làm mới phiên Supabase, chuyển hướng theo vai trò
 supabase/    config.toml và migrations/ (chép từ docs/sql)
-scripts/     seed.ts (dữ liệu demo), setup-env.mjs, sync-assets.mjs
-tests/unit/  Vitest
-docs/        tài liệu 01–07; docs/sql/ là migration gốc và bộ 92 kiểm tra
+scripts/     seed.ts (dữ liệu demo), setup-env.mjs, sync-assets.mjs, race-booking.ts, check-ledger.ts
+tests/       unit/ (Vitest), e2e/ (Playwright)
+docs/        tài liệu 01–07; docs/sql/ là migration gốc và bộ 103 kiểm tra
 design/      theme.css, components.css, đặc tả component, hàm chuyển động, logo, ảnh, minh họa, avatar
 .github/     CI, keep-alive, mẫu pull request và issue
 ```
@@ -71,9 +71,10 @@ npm run dev          # http://localhost:3000 → Đăng nhập → Đăng nhập
 | Lệnh | Việc |
 |---|---|
 | `npm run lint`, `npm run typecheck`, `npm test` | ESLint, TypeScript, Vitest |
-| `npm run db:test` | 92 kiểm tra nghiệp vụ CSDL trong Docker (không cần Supabase) |
+| `npm run db:test` | 103 kiểm tra nghiệp vụ CSDL trong Docker (không cần Supabase) |
 | `npm run race` | 20 người làm cùng nhận chỗ cuối của một ca: phải ra đúng 1 × 201, 19 × 409 (cần server đang chạy) |
-| `npm run test:e2e` | Playwright: đăng ca → ca hiện realtime → nhận ca; hai người tranh chỗ (cần server đang chạy) |
+| `npm run test:e2e` | Playwright: đăng ca → ca hiện realtime → nhận ca; hai người tranh chỗ; kiosk QR → check-in → tua giờ → check-out → duyệt → ví → rút; hủy sát giờ; trọn kịch bản demo 5 phút (cần server đang chạy) |
+| `npm run ledger:check` | Kiểm bất biến tiền I1–I5 (04 §6.3) trên CSDL đang chạy: tổng tiền, tạm giữ khớp ca, số dư khớp sổ cái |
 | `npm run db:reset`, `npm run db:types` | Áp lại migration, sinh lại `lib/database.types.ts` |
 
 Trang `/dev/ui` hiện toàn bộ token và component để kiểm tra giao diện ở hai theme. Đưa lên Supabase cloud và Vercel: [07 §11](docs/07-Implementation-Plan.md).

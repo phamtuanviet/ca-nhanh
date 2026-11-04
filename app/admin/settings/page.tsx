@@ -1,17 +1,13 @@
 import type { Metadata } from 'next';
-import { PagePlaceholder } from '@/components/layout/page';
+import { requireRole } from '@/lib/auth';
+import { getAdminSettings } from '@/lib/services/admin';
+import { SettingsForm } from './settings-form';
 
 export const metadata: Metadata = { title: 'Cấu hình' };
 
-export default function Page() {
-  return (
-    <PagePlaceholder
-      title="Cấu hình"
-      description="Tham số nền tảng"
-      illustration="kyc-verify"
-      heading="Tham số nền tảng"
-      text="Phí nền tảng, lương tối thiểu, mức phạt, thời gian chờ và cờ chế độ demo."
-      task="P3-05"
-    />
-  );
+/** Tham số nền tảng (P3-05, US-44, ADM-07): đổi không cần sửa mã */
+export default async function AdminSettingsPage() {
+  await requireRole('admin');
+  const rows = await getAdminSettings();
+  return <SettingsForm rows={rows} />;
 }

@@ -9,7 +9,7 @@ export function Skeleton({
   count?: number;
 }) {
   return (
-    <div className="grid gap-4" aria-busy="true" aria-label="Đang tải">
+    <div className="grid gap-4" role="status" aria-busy="true" aria-label="Đang tải">
       {Array.from({ length: count }, (_, i) => {
         if (shape === 'ticket') {
           return <div key={i} className="cn-skel h-[148px] rounded-[var(--radius-ticket)]" />;

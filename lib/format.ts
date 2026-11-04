@@ -18,13 +18,12 @@ export function vnDate(value: string | Date = new Date()): string {
   return new Date(value).toLocaleDateString('en-CA', { timeZone: TZ });
 }
 
-/** "Hôm nay", "Ngày mai", "Thứ Bảy 07/11" */
+/** "Hôm nay", "Ngày mai", "Hôm qua", "Thứ Bảy 07/11" */
 export function fmtDay(value: string | Date, now: Date = new Date()): string {
   const day = vnDate(value);
-  const today = vnDate(now);
-  const tomorrow = vnDate(new Date(now.getTime() + 86_400_000));
-  if (day === today) return 'Hôm nay';
-  if (day === tomorrow) return 'Ngày mai';
+  if (day === vnDate(now)) return 'Hôm nay';
+  if (day === vnDate(new Date(now.getTime() + 86_400_000))) return 'Ngày mai';
+  if (day === vnDate(new Date(now.getTime() - 86_400_000))) return 'Hôm qua';
   return fmtDate(value);
 }
 
@@ -71,4 +70,33 @@ export function fmtAgo(value: string | Date, now: Date = new Date()): string {
 /** Tên gọi ngắn: "Nguyễn Văn Minh" → "Minh" */
 export function givenName(fullName: string): string {
   return fullName.trim().split(/\s+/).at(-1) ?? fullName;
+}
+
+/** "Nguyễn Văn Minh" → "NGUYEN VAN MINH" (tên chủ tài khoản ngân hàng) */
+export function asciiUpper(text: string): string {
+  return text
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/đ/g, 'd')
+    .replace(/Đ/g, 'D')
+    .toUpperCase()
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+const oneDecimal = new Intl.NumberFormat('vi-VN', { maximumFractionDigits: 1 });
+
+/** Tiền rút gọn cho thẻ số, trục: 77.259.000 → "77,3 triệu" ("77,3 tr" khi `short`) */
+export function compactVnd(amount: number, short = false): string {
+  const abs = Math.abs(amount);
+  if (abs >= 1e9) return `${oneDecimal.format(amount / 1e9)} tỷ`;
+  if (abs >= 1e6) return `${oneDecimal.format(amount / 1e6)} ${short ? 'tr' : 'triệu'}`;
+  if (abs >= 1e3) return `${oneDecimal.format(amount / 1e3)} ${short ? 'k' : 'nghìn'}`;
+  return `${amount}đ`;
+}
+
+/** 0.849 → "84,9%" */
+export function pct(ratio: number | null | undefined, digits = 1): string {
+  if (ratio === null || ratio === undefined) return '—';
+  return `${(ratio * 100).toLocaleString('vi-VN', { maximumFractionDigits: digits })}%`;
 }

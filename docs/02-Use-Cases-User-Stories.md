@@ -673,6 +673,6 @@ Giả định nhóm 4 người (2 frontend, 1 full-stack, 1 full-stack/QA), mỗ
 | 3:30 | Hai bên | Đánh giá 5 sao, thẻ "Muốn mời lại" | Lịch sử và điểm thành CV | UC-17 |
 | 3:50 | Laptop (admin) | Dashboard KPI 30 ngày | GMV, doanh thu phí 20%, fill rate, time-to-fill: khớp ô *Dòng doanh thu* của BMC | UC-22 |
 | 4:20 | Laptop | Mở hồ sơ một người làm bị tạm khóa vì vắng mặt | Trả lời trước câu "người làm bỏ ca thì sao?" | UC-24 |
-| 4:45 | Slide | Kiến trúc 0đ: Vercel + Supabase; 92 kiểm thử CSDL đạt | Khả thi kỹ thuật | — |
+| 4:45 | Slide | Kiến trúc 0đ: Vercel + Supabase; 103 kiểm thử CSDL đạt | Khả thi kỹ thuật | — |
 
 Phương án dự phòng: video quay sẵn 1 phút (theo slide), và chạy trước kịch bản một lần ngay sau khi reset, để luôn có sẵn một booking ở trạng thái *chờ duyệt*. Nhờ vậy vẫn trình diễn được phần tiền nếu mạng chập chờn.

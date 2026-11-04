@@ -8,8 +8,65 @@
   "background_color": "#F4F7FD",
   "theme_color": "#2D58F2",
   "icons": [
-    { "src": "/brand/app-icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
-    { "src": "/brand/app-icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
-    { "src": "/brand/app-icon-maskable.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "maskable" }
+    {
+      "src": "/brand/app-icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/brand/app-icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/brand/app-icon-maskable.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    }
+  ],
+  "id": "/worker",
+  "scope": "/",
+  "orientation": "portrait",
+  "categories": [
+    "business",
+    "productivity"
+  ],
+  "shortcuts": [
+    {
+      "name": "Quét QR chấm công",
+      "short_name": "Quét QR",
+      "url": "/worker/scan",
+      "icons": [
+        {
+          "src": "/brand/app-icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "Ca của tôi",
+      "short_name": "Ca của tôi",
+      "url": "/worker/bookings",
+      "icons": [
+        {
+          "src": "/brand/app-icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "Ví",
+      "short_name": "Ví",
+      "url": "/worker/wallet",
+      "icons": [
+        {
+          "src": "/brand/app-icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    }
   ]
 }

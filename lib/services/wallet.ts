@@ -82,6 +82,13 @@ function presentOrder(order: PaymentOrder) {
     transfer_note: order.reference_code,
     bank: isTopup ? bank : null,
     qr_image_url: isTopup ? vietQrImageUrl(bank, order.amount, order.reference_code) : null,
+    bank_snapshot: isTopup
+      ? null
+      : (order.bank_snapshot as {
+          bank_bin: string;
+          account_no: string;
+          account_name: string;
+        } | null),
   };
 }
 
@@ -178,4 +185,37 @@ export async function confirmTopupFromWebhook(payload: {
   });
   if (error) throw fromPostgrest(error);
   return { received: true, status: 'credited', reference_code: reference };
+}
+
+/**
+ * POST /wallet/withdrawals: trừ ví ngay, tạo lệnh rút (bắt buộc Idempotency-Key). Ở chế độ demo, lệnh
+ * được hoàn tất luôn trong cùng request (05 §4.7); khi tắt demo, lệnh chờ admin xác nhận.
+ */
+export async function requestWithdrawal(userId: string, amount: number, idempotencyKey: string) {
+  const db = adminClient();
+  const { data, error } = await db.rpc('fn_request_withdrawal', {
+    p_actor: userId,
+    p_amount: amount,
+    p_idempotency_key: idempotencyKey,
+  });
+  if (error) {
+    const apiError = fromPostgrest(error);
+    if (apiError.code === 'AMOUNT_OUT_OF_RANGE') {
+      const settings = await getSettings();
+      throw new ApiError('AMOUNT_OUT_OF_RANGE', { min: settings.withdraw_min });
+    }
+    throw apiError;
+  }
+  let order = data;
+  const settings = await getSettings();
+  if (order.status === 'pending' && isDemoMode() && settings.demo_mode.enabled) {
+    const done = await db.rpc('fn_complete_withdrawal', {
+      p_order_id: order.id,
+      p_success: true,
+      p_provider_txn_id: `SIMW${Date.now()}`,
+    });
+    if (done.error) throw fromPostgrest(done.error);
+    order = done.data;
+  }
+  return presentOrder(order);
 }

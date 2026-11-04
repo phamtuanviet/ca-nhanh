@@ -6,7 +6,7 @@
 | Thời lượng | Phase 0 (3 ngày) + 3 phase × 1 tuần → sẵn sàng demo ngày **30/11/2026**. Dời các mốc nếu ngày bảo vệ khác |
 | Nhóm (giả định) | 4 người: **FE-A** (màn hình người làm), **FE-B** (màn hình quán và admin), **FS** (API, Supabase, realtime), **QA** (component chung, kiểm thử, CI, công cụ demo). Nhóm 3 người thì QA kiêm FS |
 | Đầu vào | [01 SRS](01-SRS.md) · [02 Use Case & Story](02-Use-Cases-User-Stories.md) · [03 HLD](03-System-Architecture-HLD.md) · [04 CSDL](04-ERD-Database-Schema.md) + [`sql/`](sql/) · [05 API](05-API-Specification.md) · [06 Giao diện](06-UI-Design-System.md) + [`design/`](../design/) |
-| Đã có sẵn | CSDL và 53 hàm nghiệp vụ đã kiểm thử 92/92; hệ thiết kế (token, CSS component, hàm chuyển động, asset). Chưa có mã ứng dụng |
+| Đã có sẵn | CSDL và 53 hàm nghiệp vụ đã kiểm thử 92/92 (nay 103/103 sau migration `0005` ở Phase 2); hệ thiết kế (token, CSS component, hàm chuyển động, asset). Chưa có mã ứng dụng |
 
 ---
 
@@ -76,7 +76,7 @@ gantt
 | Môi trường | Ứng dụng | CSDL | Dùng để |
 |---|---|---|---|
 | Local | `npm run dev` | Supabase local (`npx supabase start`, cần Docker) hoặc dự án *dev* | Lập trình hằng ngày |
-| Kiểm thử CSDL | | Docker PostGIS: `bash docs/sql/test/run_tests.sh` | 92 kiểm tra nghiệp vụ, chạy cả trong CI |
+| Kiểm thử CSDL | | Docker PostGIS: `bash docs/sql/test/run_tests.sh` | 103 kiểm tra nghiệp vụ, chạy cả trong CI |
 | Preview | Vercel Preview cho mỗi pull request | Dự án Supabase *dev* | Review |
 | Demo | Vercel Production | Dự án Supabase *demo* | Thuyết trình |
 
@@ -178,7 +178,7 @@ Phụ thuộc chính: P1-09 và P1-10 cần P1-05, P1-06 (giao diện làm trư�
 2. Gherkin của US-09, US-12, US-22 ([02 §6.1–6.3](02-Use-Cases-User-Stories.md)) đạt.
 3. Script tranh chỗ: 20 yêu cầu song song cho ra đúng 1 × 201 và 19 × 409 `SHIFT_FULL`.
 4. Lighthouse mobile trang `/worker`: LCP < 2,5 s, CLS < 0,1.
-5. CI xanh: unit, E2E, 92/92 kiểm tra CSDL.
+5. CI xanh: unit, E2E, 92/92 kiểm tra CSDL (nay 103/103).
 
 **Trạng thái (04/11/2026)**: P1-01 → P1-18 đã làm trên nhánh `feat/p1-vong-cho`, kiểm tra trên Supabase cục bộ với bản build production:
 - 47 kiểm tra API bằng curl theo Gherkin 6.1–6.3 (nạp ví, webhook gửi lại, đăng ca, thiếu tiền, tìm ca, nhận ca, trùng giờ, phân quyền) và kiểm tra onboarding (dưới 18 tuổi, metadata `role=admin`).
@@ -212,6 +212,16 @@ Chưa làm được: tiêu chí 1 trên URL production và P1-19 với điện t
 
 **Tiêu chí kết thúc Phase 2**: Gherkin [02 §6.4–6.8](02-Use-Cases-User-Stories.md) đạt; QR cũ và check-in ngoài vùng bị từ chối với đúng thông điệp; số dư 3 ví khớp sổ cái sau E2E; đoạn 1:40–3:10 chạy trên production.
 
+**Trạng thái (04/11/2026)**: P2-01 → P2-11 đã làm trên nhánh `feat/p2-cham-cong-tien`, kiểm tra trên Supabase cục bộ với bản build production:
+- 54 kiểm tra API bằng curl theo Gherkin 6.4–6.8 và 6.11: mã kiosk, QR cũ (`QR_EXPIRED`), QR quán khác, quét từ xa 1,5 km, không có GPS, check-in 2 lần, hủy cả ca khi đã có người check-in, check-out 240 phút = 120.000đ, điều chỉnh không lý do, quyết toán đúng 3 ví, rút tiền (thiếu `Idempotency-Key`, gửi lại cùng khóa, quá số dư, chưa có ngân hàng), hủy sát giờ 2 điểm, hủy sớm 0 điểm, quán hủy bồi thường 60.000đ, vắng mặt 4 điểm và tạm khóa, phân quyền tua giờ.
+- P2-09: bộ hẹn giờ hiện đúng trên giao diện và thông báo (nhắc ca đúng một lần, vắng mặt → banner tạm khóa và lịch sử, quên check-out → "Hệ thống đã check-out giúp bạn" và nhãn *Tự check-out* ở trang Giờ công, quá 12 giờ → tự duyệt, tiền vào ví); `pg_cron` chạy mỗi phút.
+- P2-12 (mô phỏng bằng 4 trình duyệt: chị Lan, kiosk, Minh, An): đoạn 1:40–3:10 đạt 28/28 bước, chạy hai lần liên tiếp không reset (chạy tập rồi chạy thật). Quán thấy Minh *Đã đến* sau khoảng 1,1 giây; tiền vào ví Minh sau khoảng 0,8 giây kể từ lúc bấm *Duyệt*; rút tiền "Đang xử lý" 1,8 giây rồi "Thành công".
+- Playwright 4 kịch bản (Phase 1 + 2) đạt 3 vòng liên tiếp; `npm run race` đạt; `npm run ledger:check` đạt I1–I5 sau mọi lần chạy và đã thêm vào job E2E của CI.
+- Migration `0005` (103/103 kiểm tra CSDL): chống trùng giờ chỉ áp cho booking còn hiệu lực, vì trước đó lần "Tua tới giờ kết thúc" thứ hai của cùng người làm (chạy tập rồi demo) bị `BOOKING_OVERLAP`; `fn_cancel_shift` không hủy ca đã có người check-in.
+- Next 16.4: đọc phiên gọi `connection()` trước (Supabase so hạn token với giờ hiện tại); mỗi trang có `loading.tsx` để chuyển trang hiện khung ngay (hết cảnh báo *instant navigation* trong dev).
+
+Chưa làm được: chạy đoạn 1:40–3:10 trên URL production và điện thoại thật (cần Supabase cloud và Vercel, §11). Trang *Công cụ demo* của admin (reset, chạy bộ hẹn giờ) vẫn là P3-06; API đã có.
+
 ---
 
 ## 6. Phase 3 — Quản trị, hoàn thiện và sẵn sàng demo (23–28/11)
@@ -223,7 +233,7 @@ Chưa làm được: tiêu chí 1 trên URL production và P1-19 với điện t
 | P3-01 | Bản đồ ca (W3): react-leaflet, marker theo quán, ca gấp nổi bật, chuyển qua lại giữa danh sách và bản đồ | FE-A | 1 ngày | US-20 |
 | P3-02 | Lịch sử ví quán và giao dịch (`GET /wallet/transactions`) | FE-B | 0,5 ngày | US-10 |
 | P3-03 | Đánh giá hai chiều: sheet đánh giá sau ca, thẻ nhanh, "Muốn mời lại" → người quen; `POST /bookings/{id}/reviews` | FE-A + FE-B + FS | 1,25 ngày | Gherkin [02 §6.9](02-Use-Cases-User-Stories.md); US-37, US-38 |
-| P3-04 | Dashboard KPI (A1): `GET /admin/kpis`, thẻ số và biểu đồ theo ngày (Recharts), chọn khoảng ngày | FE-B + FS | 1,75 ngày | Gherkin [02 §6.10](02-Use-Cases-User-Stories.md) |
+| P3-04 | Dashboard KPI (A1): `GET /admin/kpis`, thẻ số và biểu đồ theo ngày (Recharts; thực tế: SVG tự vẽ, xem 03 §1), chọn khoảng ngày | FE-B + FS | 1,75 ngày | Gherkin [02 §6.10](02-Use-Cases-User-Stories.md) |
 | P3-05 | Quản trị: người dùng (khóa, gỡ tạm khóa), duyệt quán, lệnh thanh toán, cấu hình tham số | FE-B + FS | 1,5 ngày | US-42, US-44 |
 | P3-06 | Trang công cụ demo: reset (có bước xác nhận), tua thời gian từng ca, chạy tick ngay | FE-A | 0,5 ngày | US-45 |
 | P3-07 | Should: đẩy ca gấp (US-16, `POST /shifts/{id}/boost`), ưu tiên và mời người quen (US-17, `POST /shifts/{id}/invites`), hồ sơ năng lực người làm (US-24, `GET /workers/{id}`), đăng nhập Google (FR-AUTH-02: OAuth client trên Google Cloud, bật provider trong Supabase, route `/auth/callback`) | FS + FE-A + FE-B | 2,75 ngày | Đạt tiêu chí chấp nhận ở [02 §5](02-Use-Cases-User-Stories.md) |
@@ -234,6 +244,14 @@ Chưa làm được: tiêu chí 1 trên URL production và P1-19 với điện t
 | P3-12 | Sẵn sàng demo: checklist [03 §11](03-System-Architecture-HLD.md), tập dượt 2 lần, quay video dự phòng 1 phút, giữ dự án Supabase hoạt động | Cả nhóm | 0,5 ngày | Checklist đã tích đủ |
 
 **Tiêu chí kết thúc Phase 3**: tiêu chí nghiệm thu demo [01 §9](01-SRS.md) đạt đủ 8 mục; mọi story Must xong; CI xanh.
+
+**Trạng thái (04/11/2026)**: P3-01 → P3-11 đã làm trên nhánh `feat/p3-quan-tri-hoan-thien` (tách từ nhánh Phase 2 vì PR #3 chưa merge), kiểm tra trên Supabase cục bộ với bản build production:
+- 61 kiểm tra API: đánh giá hai chiều và "Muốn mời lại" → người quen, đánh giá lại bị chặn (Gherkin 6.9); KPI 30 ngày đủ 8 chỉ số và 30 điểm (6.10); khóa/mở khóa, gỡ tạm khóa, duyệt quán, cấu hình theo schema từng khóa, `min_lead_minutes = 2`; mời người quen (người lạ bị bỏ qua), nhận/từ chối lời mời; đẩy ca gấp (phí vào ví nền tảng, không trừ hai lần); hồ sơ năng lực (SĐT theo BR-28), chặn/bỏ chặn; admin xác nhận lệnh rút thành công/thất bại.
+- Playwright 5 kịch bản (Phase 1, 2 và `demo.spec.ts` đi trọn kịch bản 5 phút với 4 thiết bị) đạt 2 vòng liên tiếp; `npm run race`, `npm run ledger:check` đạt.
+- Lighthouse mobile (bản build production): hiệu năng 97–100, trợ năng 100, LCP 1,1–1,6 s, CLS ≤ 0,008, TBT ≤ 200 ms. axe-core: 0 vi phạm serious/critical trên 19 trang × 2 theme. Trang Khám phá vẫn xin vị trí ngay khi mở (Lighthouse cảnh báo `geolocation-on-start`): giữ có chủ đích vì trang là "ca gần bạn", từ chối thì chọn quận.
+- Biểu đồ KPI tự vẽ bằng SVG thay Recharts; 2 màu đã qua bộ kiểm tra bảng màu (dataviz) ở cả hai theme.
+
+Chưa làm được: P3-12 trên URL production và điện thoại thật, tập dượt với cả nhóm và quay video (cần Supabase cloud, Vercel). Đăng nhập Google đã có mã nhưng chưa bật: cần OAuth client của nhóm (§11). Checklist ngày demo cập nhật ở [03 §11](03-System-Architecture-HLD.md).
 
 ---
 
@@ -311,8 +329,10 @@ Trước khi mở pull request: `npm run lint && npm run typecheck && npm test &
 ```bash
 npx supabase login                                  # mở trình duyệt, đăng nhập tài khoản Supabase của nhóm
 npx supabase link --project-ref <dev-project-ref>
-npx supabase db push                                # áp 4 migration
+npx supabase db push                                # áp 5 migration (0001–0005)
 SEED_ENV_FILE=.env.dev npm run seed                 # .env.dev: NEXT_PUBLIC_SUPABASE_URL, SUPABASE_SECRET_KEY, DEMO_PASSWORD của dự án dev
 ```
 
 Sau đó import repo vào Vercel, khai báo biến theo `.env.example` (giá trị của dự án *demo* cho Production, *dev* cho Preview), thêm URL Vercel vào *Authentication → URL Configuration* của Supabase, và đặt secret `APP_URL` cho workflow `keep-alive`.
+
+**Đăng nhập Google** (FR-AUTH-02, tùy chọn): tạo *OAuth client ID* loại *Web application* trên Google Cloud Console, thêm *Authorized redirect URI* `https://<project-ref>.supabase.co/auth/v1/callback` (máy local: `http://127.0.0.1:55321/auth/v1/callback`). Trên Supabase cloud bật *Authentication → Providers → Google* với client ID và secret; ở máy local đặt `SUPABASE_AUTH_EXTERNAL_GOOGLE_CLIENT_ID`, `SUPABASE_AUTH_EXTERNAL_GOOGLE_SECRET` rồi đổi `enabled = true` trong `[auth.external.google]` của `supabase/config.toml`. Cuối cùng đặt `NEXT_PUBLIC_GOOGLE_AUTH=true` để hiện nút *Tiếp tục với Google*; người dùng mới đi qua onboarding để chọn vai trò.

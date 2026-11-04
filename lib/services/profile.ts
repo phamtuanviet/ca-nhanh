@@ -2,25 +2,16 @@ import 'server-only';
 import type { z } from 'zod';
 import { ApiError, type ApiUser, unwrap, unwrapMaybe } from '@/lib/api';
 import { fromPostgrest } from '@/lib/errors';
+import { asciiUpper } from '@/lib/format';
 import { toEwkt } from '@/lib/geo';
 import type { Database } from '@/lib/database.types';
 import { adminClient } from '@/lib/supabase/admin';
 import type { onboardingSchema, updateMeSchema, workerProfileSchema } from '@/lib/validators';
 
+export { asciiUpper };
+
 function maskAccount(accountNo: string | null): string | null {
   return accountNo ? `•••• ${accountNo.slice(-4)}` : null;
-}
-
-/** "Nguyễn Văn Minh" → "NGUYEN VAN MINH" (tên chủ tài khoản ngân hàng) */
-export function asciiUpper(text: string): string {
-  return text
-    .normalize('NFD')
-    .replace(/[̀-ͯ]/g, '')
-    .replace(/đ/g, 'd')
-    .replace(/Đ/g, 'D')
-    .toUpperCase()
-    .replace(/\s+/g, ' ')
-    .trim();
 }
 
 /** Hồ sơ đầy đủ của người đang đăng nhập (GET /me, 05 §4.2) */
@@ -161,4 +152,23 @@ export async function updateWorkerProfile(
     if (!data?.length) throw new ApiError('PROFILE_INCOMPLETE');
   }
   return getMe(user);
+}
+
+/** Banner tạm khóa nhận ca (P2-07, BR-11): còn bị khóa không, đến bao giờ, bao nhiêu điểm phạt */
+export async function workerStanding(userId: string) {
+  const db = adminClient();
+  const [wp, points] = await Promise.all([
+    db
+      .from('worker_profiles')
+      .select('suspended_until')
+      .eq('user_id', userId)
+      .maybeSingle()
+      .then(unwrapMaybe),
+    db.rpc('penalty_points_of', { p_worker: userId }).then(unwrapMaybe),
+  ]);
+  const until = wp?.suspended_until ?? null;
+  return {
+    suspended_until: until && new Date(until).getTime() > Date.now() ? until : null,
+    penalty_points: points ?? 0,
+  };
 }

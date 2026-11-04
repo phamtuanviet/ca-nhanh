@@ -54,7 +54,7 @@ export function PagePlaceholder({
 /** Khung chờ cho nội dung khu vực khi đang kiểm tra phiên */
 export function PageSkeleton() {
   return (
-    <div className="grid gap-4" aria-busy="true" aria-label="Đang tải">
+    <div className="grid gap-4" role="status" aria-busy="true" aria-label="Đang tải">
       <div className="cn-skel h-8 w-48" />
       <div className="cn-skel h-5 w-72 max-w-full" />
       <div className="cn-skel mt-2 h-64 w-full rounded-[var(--radius-card)]" />

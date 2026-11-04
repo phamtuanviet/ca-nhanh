@@ -6,7 +6,11 @@ type Seat = { name: string; avatar: string };
 
 export function SeatsSample({ headcount, filled }: { headcount: number; filled: Seat[] }) {
   return (
-    <div className="cn-seats" aria-label={`${filled.length}/${headcount} chỗ đã có người`}>
+    <div
+      className="cn-seats"
+      role="img"
+      aria-label={`${filled.length}/${headcount} chỗ đã có người`}
+    >
       {filled.map((seat) => (
         <span key={seat.name} className="cn-seat" title={seat.name}>
           {/* eslint-disable-next-line @next/next/no-img-element -- avatar SVG nhỏ */}

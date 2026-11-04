@@ -1,17 +1,28 @@
 import type { Metadata } from 'next';
-import { PagePlaceholder } from '@/components/layout/page';
+import { requireRole } from '@/lib/auth';
+import { getMe } from '@/lib/services/profile';
+import { getSettings } from '@/lib/services/settings';
+import { getWallet } from '@/lib/services/wallet';
+import { WorkerWallet } from './worker-wallet';
 
 export const metadata: Metadata = { title: 'Ví' };
 
-export default function Page() {
+/** W7: ví người làm, tài khoản ngân hàng, rút tiền (P2-06, US-06, US-34) */
+export default async function WorkerWalletPage() {
+  const user = await requireRole('worker');
+  const [wallet, me, settings] = await Promise.all([
+    getWallet(user.id),
+    getMe(user),
+    getSettings(),
+  ]);
+  const bank = me.worker_profile?.bank ?? null;
   return (
-    <PagePlaceholder
-      title="Ví"
-      description="Tiền công và rút về ngân hàng"
-      illustration="wallet-paid"
-      heading="Tiền công vào ví ngay khi quán duyệt"
-      text="Số dư, lịch sử nhận tiền và rút về tài khoản ngân hàng trong ngày."
-      task="P2-06"
+    <WorkerWallet
+      userId={user.id}
+      initial={wallet}
+      bank={bank}
+      fullName={me.full_name}
+      withdrawMin={settings.withdraw_min}
     />
   );
 }

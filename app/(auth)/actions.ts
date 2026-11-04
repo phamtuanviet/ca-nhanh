@@ -5,8 +5,8 @@ import { z } from 'zod';
 import { DEMO_ACCOUNTS, isDemoAccountKey } from '@/lib/demo';
 import { publicEnv } from '@/lib/env';
 import { isDemoMode, serverEnv } from '@/lib/env.server';
-import { ROLE_HOME, safeNextPath } from '@/lib/roles';
-import { adminClient } from '@/lib/supabase/admin';
+import { destinationFor } from '@/lib/auth-destination';
+import { safeNextPath } from '@/lib/roles';
 import { createClient } from '@/lib/supabase/server';
 
 export type AuthFormState = {
@@ -26,19 +26,6 @@ const signUpSchema = z.object({
   password: z.string().min(8, 'Mật khẩu tối thiểu 8 ký tự'),
   role: z.enum(['worker', 'shop_owner'], { error: 'Chọn vai trò' }),
 });
-
-/** Trang đích sau khi đăng nhập: ?next= nếu hợp lệ, nếu không thì trang chủ theo vai trò */
-async function destinationFor(userId: string, next: string | null): Promise<string> {
-  const { data: profile } = await adminClient()
-    .from('profiles')
-    .select('role, onboarded_at')
-    .eq('id', userId)
-    .maybeSingle();
-  if (!profile?.onboarded_at) return '/onboarding';
-  const home = ROLE_HOME[profile.role];
-  // Chỉ dùng ?next= khi nó thuộc khu vực của chính vai trò đó
-  return next && next.startsWith(home) ? next : home;
-}
 
 export async function signIn(_prev: AuthFormState, formData: FormData): Promise<AuthFormState> {
   const parsed = signInSchema.safeParse(Object.fromEntries(formData));

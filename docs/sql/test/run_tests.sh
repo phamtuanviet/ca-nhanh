@@ -15,7 +15,8 @@ run() { docker exec -i canhanh-test psql -U postgres -v ON_ERROR_STOP=1 -q -f - 
 run < 00_local_supabase_stubs.sql
 for f in ../0001_schema.sql ../0002_functions.sql ../0003_security.sql; do run < "$f" || exit 1; done
 grep -v "create extension if not exists pg_cron" ../0004_cron_realtime.sql | run >/dev/null || exit 1
-for t in 10_scenario_test.sql 20_demo_reset_test.sql 30_fast_forward_test.sql; do
+run < ../0005_phase2_fixes.sql || exit 1
+for t in 10_scenario_test.sql 20_demo_reset_test.sql 30_fast_forward_test.sql 40_phase2_test.sql; do
   echo "== $t"; docker exec -i canhanh-test psql -U postgres -q -f - < "$t" 2>&1 | grep -v "^$"
 done
 docker rm -f canhanh-test >/dev/null
