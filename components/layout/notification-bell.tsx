@@ -74,6 +74,11 @@ export function targetOf(n: Pick<Notification, 'type' | 'data'>, role: Role): st
       return shift ?? '/worker';
     case 'kyc.reviewed':
       return '/worker/profile';
+    case 'shop.reviewed':
+      return '/shop/settings';
+    case 'account.unsuspended':
+    case 'account.unlocked':
+      return shop ? '/shop' : '/worker';
     case 'review.received':
     case 'dispute.opened':
     case 'dispute.resolved':

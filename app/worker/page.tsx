@@ -4,7 +4,9 @@ import Link from 'next/link';
 import { requireRole } from '@/lib/auth';
 import { fmtDateTime } from '@/lib/format';
 import { getPositions } from '@/lib/services/catalog';
+import { listInvites } from '@/lib/services/invites';
 import { workerStanding } from '@/lib/services/profile';
+import { InviteCard } from '@/components/worker/invite-card';
 import { ShiftExplorer } from './shift-explorer';
 
 export const metadata: Metadata = { title: 'Khám phá ca' };
@@ -13,7 +15,11 @@ export const metadata: Metadata = { title: 'Khám phá ca' };
 export default async function ExplorePage() {
   // Đọc phiên trước khi lấy dữ liệu: trang chạy lúc có request, không bị prerender lúc build
   const user = await requireRole('worker');
-  const [positions, standing] = await Promise.all([getPositions(), workerStanding(user.id)]);
+  const [positions, standing, invites] = await Promise.all([
+    getPositions(),
+    workerStanding(user.id),
+    listInvites(user.id, 'pending'),
+  ]);
   return (
     <>
       {standing.suspended_until ? (
@@ -36,6 +42,15 @@ export default async function ExplorePage() {
             </span>
           </p>
         </div>
+      ) : null}
+      {invites.length > 0 ? (
+        <section className="mb-4 grid gap-2" aria-label="Lời mời làm ca">
+          <ul className="grid gap-2">
+            {invites.slice(0, 3).map((i) => (
+              <InviteCard key={i.id} invite={i} />
+            ))}
+          </ul>
+        </section>
       ) : null}
       <ShiftExplorer positions={positions} />
     </>

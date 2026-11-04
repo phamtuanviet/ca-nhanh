@@ -7,6 +7,7 @@ import { fromPostgrest } from '@/lib/errors';
 import { estimateShift } from '@/lib/money';
 import { adminClient } from '@/lib/supabase/admin';
 import type { estimateSchema, publishShiftSchema, searchShiftsSchema } from '@/lib/validators';
+import { canReview } from './bookings';
 import { getSettings } from './settings';
 import { getOwnedShop, getShop } from './shops';
 
@@ -261,12 +262,13 @@ async function shiftBookings(shiftId: string) {
     await adminClient()
       .from('bookings')
       .select(
-        'id, status, booked_at, check_in_at, check_in_distance_m, check_out_at, is_late, worked_minutes, wage_amount, worker:profiles!bookings_worker_id_fkey(id, full_name, avatar_url, worker_profiles(rating_avg, rating_count, completed_count))',
+        'id, status, booked_at, check_in_at, check_in_distance_m, check_out_at, is_late, worked_minutes, wage_amount, settled_at, reviews(direction), worker:profiles!bookings_worker_id_fkey(id, full_name, avatar_url, worker_profiles(rating_avg, rating_count, completed_count))',
       )
       .eq('shift_id', shiftId)
       .order('booked_at'),
   );
-  return rows.map(({ worker, ...booking }) => {
+  const now = Date.now();
+  return rows.map(({ worker, reviews, ...booking }) => {
     const w = worker as unknown as {
       id: string;
       full_name: string;
@@ -275,6 +277,7 @@ async function shiftBookings(shiftId: string) {
     };
     return {
       ...booking,
+      can_review: canReview({ ...booking, reviews }, 'shop_to_worker', now),
       worker: {
         id: w.id,
         full_name: w.full_name,
@@ -376,6 +379,16 @@ export async function cancelShift(user: Pick<ApiUser, 'id'>, shiftId: string, re
     p_actor: user.id,
     p_shift_id: shiftId,
     p_reason: reason || 'Quán hủy ca',
+  });
+  if (error) throw fromPostgrest(error);
+  return presentShift(data);
+}
+
+/** POST /shifts/{id}/boost (P3-07, US-16): phí đẩy ca gấp vào ví nền tảng, báo người làm trong 3 km */
+export async function boostShift(user: Pick<ApiUser, 'id'>, shiftId: string) {
+  const { data, error } = await adminClient().rpc('fn_boost_shift', {
+    p_actor: user.id,
+    p_shift_id: shiftId,
   });
   if (error) throw fromPostgrest(error);
   return presentShift(data);
