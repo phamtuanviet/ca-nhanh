@@ -1,17 +1,22 @@
 import type { Metadata } from 'next';
-import { PagePlaceholder } from '@/components/layout/page';
+import { requireRole } from '@/lib/auth';
+import { isDemoMode } from '@/lib/env.server';
+import { getSettings } from '@/lib/services/settings';
+import { getWallet } from '@/lib/services/wallet';
+import { ShopWallet } from './shop-wallet';
 
 export const metadata: Metadata = { title: 'Ví quán' };
 
-export default function Page() {
+/** S7: ví quán và nạp tiền VietQR (P1-13) */
+export default async function ShopWalletPage() {
+  const user = await requireRole('shop_owner');
+  const [wallet, settings] = await Promise.all([getWallet(user.id), getSettings()]);
   return (
-    <PagePlaceholder
-      title="Ví quán"
-      description="Số dư khả dụng và tiền đang tạm giữ"
-      illustration="wallet-paid"
-      heading="Nạp ví bằng VietQR"
-      text="Số dư khả dụng, tiền đang tạm giữ cho các ca và lịch sử giao dịch."
-      task="P1-13"
+    <ShopWallet
+      userId={user.id}
+      initial={wallet}
+      demo={isDemoMode() && settings.demo_mode.enabled}
+      topupMin={settings.topup_min}
     />
   );
 }
