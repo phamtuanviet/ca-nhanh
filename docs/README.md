@@ -80,6 +80,6 @@ Các sơ đồ viết bằng **Mermaid**. GitHub hiển thị trực tiếp. Tro
 | Tài liệu 01–07 | Bản 1.0 để nhóm review |
 | Lược đồ CSDL + hàm nghiệp vụ | Đã viết, đã kiểm thử trên PostgreSQL 17 + PostGIS 3.5 (92/92) |
 | Hệ thiết kế | Xong: token, CSS component, hàm chuyển động, đặc tả component, asset trong `design/` |
-| Mã nguồn ứng dụng Next.js | Phase 0 xong trên máy (Supabase cục bộ); chưa có dự án Supabase cloud và Vercel. Xem [07 §3](07-Implementation-Plan.md) |
+| Mã nguồn ứng dụng Next.js | Phase 0 và Phase 1 xong trên máy (Supabase cục bộ); chưa có dự án Supabase cloud và Vercel. Xem [07 §3–§4](07-Implementation-Plan.md) |
 | Cần nhóm điền | `[Tên nhóm]`, tài khoản ngân hàng demo cho VietQR, khu vực/quận demo |
 | Cần kiểm chứng | Phí 20%, mức phạt, giả định thị trường: phỏng vấn 10–15 người ở cả hai phía (tuần 1 trong slide) |
