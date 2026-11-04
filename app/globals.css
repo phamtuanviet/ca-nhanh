@@ -77,3 +77,40 @@
   box-shadow: var(--shadow-pop);
   transform: rotate(-45deg);
 }
+
+/* Biểu đồ (dataviz): 2 màu phân loại đã qua bộ kiểm tra bảng màu ở cả hai theme
+   (dải sáng, độ bão hòa, tách màu khi mù màu ΔE ≥ 31, tương phản ≥ 3:1 với nền thẻ) */
+:root {
+  --chart-1: #2d58f2; /* lam-600 */
+  --chart-2: #bc7507; /* nghệ-500 */
+}
+@media (prefers-color-scheme: dark) {
+  :root:not(.light):not([data-theme='light']) {
+    --chart-1: #4e7dfe; /* lam-500 */
+  }
+}
+.dark,
+[data-theme='dark'] {
+  --chart-1: #4e7dfe;
+}
+
+/* View Transitions (P3-08): vé ca nở thành trang chi tiết; mờ nhẹ giữa chừng để giấu nội suy điểm ảnh */
+::view-transition-group(.morph) {
+  animation-duration: var(--cn-dur-sheet, 360ms);
+  animation-timing-function: var(--cn-ease-out, cubic-bezier(0.2, 0.8, 0.2, 1));
+}
+::view-transition-image-pair(.morph) {
+  animation-name: cn-via-blur;
+}
+@keyframes cn-via-blur {
+  30% {
+    filter: blur(3px);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
+}

@@ -324,6 +324,7 @@ export function ShiftExplorer({ positions }: { positions: Position[] }) {
             <li key={item.shift_id}>
               <ShiftTicket
                 href={`/worker/shifts/${item.shift_id}`}
+                transitionName={`shift-${item.shift_id}`}
                 shopName={item.shop_name}
                 shopLogoUrl={item.shop_cover_url}
                 shopRating={item.shop_rating || null}

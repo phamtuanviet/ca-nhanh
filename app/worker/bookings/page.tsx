@@ -2,9 +2,11 @@ import { QrCode, TriangleAlert } from 'lucide-react';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import type { ReactNode } from 'react';
+import { ReviewButton } from '@/components/booking/review-dialog';
 import { Badge, type BadgeTone } from '@/components/cn/badge';
 import { Countdown } from '@/components/cn/countdown';
 import { EmptyState } from '@/components/cn/empty-state';
+import { InstallHint } from '@/components/install-hint';
 import { PageHeader } from '@/components/layout/page';
 import { Button } from '@/components/ui/button';
 import { requireRole } from '@/lib/auth';
@@ -139,12 +141,23 @@ function Footer({ b, settings }: { b: WorkerBooking; settings: PlatformSettings 
       return <Note>Đang khiếu nại. Admin sẽ xử lý và quyết toán.</Note>;
     case 'completed':
       return (
-        <div className="grid gap-1 text-sm text-text-muted">
+        <div className="grid gap-2 text-sm text-text-muted">
           <span>
             {b.worked_minutes ?? 0} phút ·{' '}
             <span className="font-semibold text-money">+{vnd(b.wage_amount ?? 0)} đã vào ví</span>
           </span>
           {b.adjustment_note ? <span>Quán điều chỉnh: {b.adjustment_note}</span> : null}
+          {b.can_review ? (
+            <div className="flex justify-end">
+              <ReviewButton
+                label="Đánh giá quán"
+                bookingId={b.id}
+                direction="worker_to_shop"
+                subject={b.shop.name}
+                context={b.shift.title}
+              />
+            </div>
+          ) : null}
         </div>
       );
     case 'cancelled':
@@ -227,6 +240,7 @@ export default async function MyBookingsPage({ searchParams }: PageProps<'/worke
   return (
     <>
       <PageHeader title="Ca của tôi" actions={<MyBookingsLive userId={user.id} />} />
+      <InstallHint />
       <nav
         aria-label="Nhóm ca"
         className="mb-4 flex max-w-full gap-0.5 overflow-x-auto rounded-[var(--radius-control)] bg-surface-sunken p-1 sm:inline-flex"
