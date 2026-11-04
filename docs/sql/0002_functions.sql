@@ -1527,10 +1527,12 @@ begin
   truncate table public.notifications, public.attendance_events, public.reviews, public.disputes,
                  public.shift_invites, public.shop_worker_lists, public.wallet_transactions,
                  public.payment_orders, public.bookings, public.shifts restart identity cascade;
-  update public.wallets set balance = 0, held_balance = 0;
+  -- `where true`: Supabase bật pg_safeupdate cho request qua PostgREST, chặn UPDATE không có WHERE
+  update public.wallets set balance = 0, held_balance = 0 where true;
   update public.worker_profiles
-     set rating_avg = 0, rating_count = 0, completed_count = 0, no_show_count = 0, suspended_until = null;
-  update public.shops set rating_avg = 0, rating_count = 0;
+     set rating_avg = 0, rating_count = 0, completed_count = 0, no_show_count = 0, suspended_until = null
+   where true;
+  update public.shops set rating_avg = 0, rating_count = 0 where true;
 
   v_shifts := public.fn_demo_seed_history(p_days);
 
