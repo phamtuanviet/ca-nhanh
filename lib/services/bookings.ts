@@ -51,7 +51,7 @@ export async function bookShift(user: Pick<ApiUser, 'id'>, shiftId: string) {
 }
 
 const WORKER_LIST_COLUMNS =
-  'id, status, source, booked_at, check_in_at, check_out_at, is_late, auto_checked_out, worked_minutes, wage_amount, fee_amount, seat_hold, penalty_points, compensation_amount, cancelled_by, adjustment_note, shift:shifts(id, title, position_code, start_at, end_at, hourly_rate, est_wage_per_seat, status), shop:shops(id, name, address, district, cover_url)';
+  'id, status, source, booked_at, check_in_at, check_out_at, is_late, auto_checked_out, worked_minutes, wage_amount, fee_amount, seat_hold, penalty_points, compensation_amount, cancelled_by, adjustment_note, settled_at, reviews(direction), shift:shifts(id, title, position_code, start_at, end_at, hourly_rate, est_wage_per_seat, status), shop:shops(id, name, address, district, cover_url)';
 
 /** Tab của "Ca của tôi" dựa trên trạng thái booking và giờ ca */
 export function scopeOf(
@@ -69,8 +69,22 @@ export function scopeOf(
   return 'history';
 }
 
+/** Còn đánh giá được: đã quyết toán trong 7 ngày và chiều này chưa đánh giá (BR-21) */
+export function canReview(
+  booking: { status: string; settled_at: string | null; reviews: { direction: string }[] },
+  direction: 'worker_to_shop' | 'shop_to_worker',
+  now = Date.now(),
+) {
+  return (
+    booking.status === 'completed' &&
+    booking.settled_at !== null &&
+    now - new Date(booking.settled_at).getTime() < 7 * 86_400_000 &&
+    !booking.reviews.some((r) => r.direction === direction)
+  );
+}
+
 async function workerBookingRows(userId: string) {
-  return unwrap(
+  const rows = unwrap(
     await adminClient()
       .from('bookings')
       .select(WORKER_LIST_COLUMNS)
@@ -78,6 +92,11 @@ async function workerBookingRows(userId: string) {
       .order('booked_at', { ascending: false })
       .limit(500),
   );
+  const now = Date.now();
+  return rows.map(({ reviews, ...row }) => ({
+    ...row,
+    can_review: canReview({ ...row, reviews }, 'worker_to_shop', now),
+  }));
 }
 
 type WorkerRow = Awaited<ReturnType<typeof workerBookingRows>>[number];

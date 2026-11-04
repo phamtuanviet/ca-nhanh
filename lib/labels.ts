@@ -33,3 +33,15 @@ export const TXN_LABEL: Record<string, string> = {
   withdrawal_reversal: 'Hoàn tiền rút',
   adjustment: 'Điều chỉnh',
 };
+
+/** Thẻ đánh giá nhanh (05 §4.5) */
+export const REVIEW_TAG_LABEL: Record<string, string> = {
+  on_time: 'Đúng giờ',
+  fast: 'Nhanh nhẹn',
+  polite: 'Lễ phép',
+  want_rebook: 'Muốn mời lại',
+  as_described: 'Đúng mô tả',
+  friendly: 'Thân thiện',
+  clear_guidance: 'Hướng dẫn rõ',
+  paid_on_time: 'Trả tiền đúng hẹn',
+};

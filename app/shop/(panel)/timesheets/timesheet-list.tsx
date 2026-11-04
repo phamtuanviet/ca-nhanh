@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { useState, type FormEvent } from 'react';
 import { toast } from 'sonner';
 import { Badge } from '@/components/cn/badge';
+import { ReviewDialog } from '@/components/booking/review-dialog';
 import { EmptyState } from '@/components/cn/empty-state';
 import { Button } from '@/components/ui/button';
 import {
@@ -30,6 +31,8 @@ function hm(minutes: number) {
   return h > 0 ? `${h} giờ${m ? ` ${m} phút` : ''}` : `${m} phút`;
 }
 
+type ReviewTarget = { bookingId: string; name: string; context: string };
+
 export function TimesheetList({
   items,
   multiShop,
@@ -37,28 +40,58 @@ export function TimesheetList({
   items: PendingTimesheet[];
   multiShop: boolean;
 }) {
-  if (items.length === 0) {
-    return (
-      <div className="rounded-[var(--radius-card)] bg-surface shadow-[var(--shadow-card)]">
-        <EmptyState
-          illustration="qr-scan"
-          title="Không có giờ công chờ duyệt"
-          text="Khi người làm quét QR check-out, giờ công hiện ở đây để bạn duyệt. Quá 12 giờ chưa duyệt thì hệ thống tự duyệt."
-          action={{ label: 'Xem các ca', href: '/shop/shifts' }}
-        />
-      </div>
-    );
-  }
+  // Duyệt xong mở ngay hộp đánh giá (Gherkin 02 §6.9). Giữ ở cấp danh sách vì dòng vừa duyệt biến mất.
+  const [review, setReview] = useState<ReviewTarget | null>(null);
+  const onApproved = (t: PendingTimesheet) =>
+    setReview({
+      bookingId: t.id,
+      name: t.worker.full_name,
+      context: `${t.shift.title} · ${fmtRange(t.shift.start_at, t.shift.end_at)}`,
+    });
   return (
-    <ul className="grid gap-3" aria-label="Giờ công chờ duyệt">
-      {items.map((t) => (
-        <TimesheetRow key={t.id} t={t} multiShop={multiShop} />
-      ))}
-    </ul>
+    <>
+      {items.length === 0 ? (
+        <div className="rounded-[var(--radius-card)] bg-surface shadow-[var(--shadow-card)]">
+          <EmptyState
+            illustration="qr-scan"
+            title="Không có giờ công chờ duyệt"
+            text="Khi người làm quét QR check-out, giờ công hiện ở đây để bạn duyệt. Quá 12 giờ chưa duyệt thì hệ thống tự duyệt."
+            action={{ label: 'Xem các ca', href: '/shop/shifts' }}
+          />
+        </div>
+      ) : (
+        <ul className="grid gap-3" aria-label="Giờ công chờ duyệt">
+          {items.map((t) => (
+            <TimesheetRow key={t.id} t={t} multiShop={multiShop} onApproved={onApproved} />
+          ))}
+        </ul>
+      )}
+      {review ? (
+        <ReviewDialog
+          key={review.bookingId}
+          open
+          onOpenChange={(open) => {
+            if (!open) setReview(null);
+          }}
+          bookingId={review.bookingId}
+          direction="shop_to_worker"
+          subject={review.name}
+          context={review.context}
+        />
+      ) : null}
+    </>
   );
 }
 
-function TimesheetRow({ t, multiShop }: { t: PendingTimesheet; multiShop: boolean }) {
+function TimesheetRow({
+  t,
+  multiShop,
+  onApproved,
+}: {
+  t: PendingTimesheet;
+  multiShop: boolean;
+  onApproved: (t: PendingTimesheet) => void;
+}) {
   const router = useRouter();
   const [pending, setPending] = useState(false);
   const [adjusting, setAdjusting] = useState(false);
@@ -72,6 +105,7 @@ function TimesheetRow({ t, multiShop }: { t: PendingTimesheet; multiShop: boolea
     try {
       const b = await api<Approved>(`/bookings/${t.id}/approve`, { body: {} });
       toast.success(`Đã duyệt · ${vnd(b.wage_amount)} vào ví ${givenName(t.worker.full_name)}`);
+      onApproved(t);
       router.refresh();
     } catch (err) {
       toast.error(err instanceof ApiClientError ? err.message : 'Không duyệt được, thử lại sau');
@@ -174,6 +208,7 @@ function TimesheetRow({ t, multiShop }: { t: PendingTimesheet; multiShop: boolea
         t={t}
         onApproved={() => {
           setAdjusting(false);
+          onApproved(t);
           router.refresh();
         }}
       />
