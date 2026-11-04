@@ -233,7 +233,7 @@ Chưa làm được: chạy đoạn 1:40–3:10 trên URL production và điện
 | P3-01 | Bản đồ ca (W3): react-leaflet, marker theo quán, ca gấp nổi bật, chuyển qua lại giữa danh sách và bản đồ | FE-A | 1 ngày | US-20 |
 | P3-02 | Lịch sử ví quán và giao dịch (`GET /wallet/transactions`) | FE-B | 0,5 ngày | US-10 |
 | P3-03 | Đánh giá hai chiều: sheet đánh giá sau ca, thẻ nhanh, "Muốn mời lại" → người quen; `POST /bookings/{id}/reviews` | FE-A + FE-B + FS | 1,25 ngày | Gherkin [02 §6.9](02-Use-Cases-User-Stories.md); US-37, US-38 |
-| P3-04 | Dashboard KPI (A1): `GET /admin/kpis`, thẻ số và biểu đồ theo ngày (Recharts), chọn khoảng ngày | FE-B + FS | 1,75 ngày | Gherkin [02 §6.10](02-Use-Cases-User-Stories.md) |
+| P3-04 | Dashboard KPI (A1): `GET /admin/kpis`, thẻ số và biểu đồ theo ngày (Recharts; thực tế: SVG tự vẽ, xem 03 §1), chọn khoảng ngày | FE-B + FS | 1,75 ngày | Gherkin [02 §6.10](02-Use-Cases-User-Stories.md) |
 | P3-05 | Quản trị: người dùng (khóa, gỡ tạm khóa), duyệt quán, lệnh thanh toán, cấu hình tham số | FE-B + FS | 1,5 ngày | US-42, US-44 |
 | P3-06 | Trang công cụ demo: reset (có bước xác nhận), tua thời gian từng ca, chạy tick ngay | FE-A | 0,5 ngày | US-45 |
 | P3-07 | Should: đẩy ca gấp (US-16, `POST /shifts/{id}/boost`), ưu tiên và mời người quen (US-17, `POST /shifts/{id}/invites`), hồ sơ năng lực người làm (US-24, `GET /workers/{id}`), đăng nhập Google (FR-AUTH-02: OAuth client trên Google Cloud, bật provider trong Supabase, route `/auth/callback`) | FS + FE-A + FE-B | 2,75 ngày | Đạt tiêu chí chấp nhận ở [02 §5](02-Use-Cases-User-Stories.md) |
@@ -244,6 +244,14 @@ Chưa làm được: chạy đoạn 1:40–3:10 trên URL production và điện
 | P3-12 | Sẵn sàng demo: checklist [03 §11](03-System-Architecture-HLD.md), tập dượt 2 lần, quay video dự phòng 1 phút, giữ dự án Supabase hoạt động | Cả nhóm | 0,5 ngày | Checklist đã tích đủ |
 
 **Tiêu chí kết thúc Phase 3**: tiêu chí nghiệm thu demo [01 §9](01-SRS.md) đạt đủ 8 mục; mọi story Must xong; CI xanh.
+
+**Trạng thái (04/11/2026)**: P3-01 → P3-11 đã làm trên nhánh `feat/p3-quan-tri-hoan-thien` (tách từ nhánh Phase 2 vì PR #3 chưa merge), kiểm tra trên Supabase cục bộ với bản build production:
+- 61 kiểm tra API: đánh giá hai chiều và "Muốn mời lại" → người quen, đánh giá lại bị chặn (Gherkin 6.9); KPI 30 ngày đủ 8 chỉ số và 30 điểm (6.10); khóa/mở khóa, gỡ tạm khóa, duyệt quán, cấu hình theo schema từng khóa, `min_lead_minutes = 2`; mời người quen (người lạ bị bỏ qua), nhận/từ chối lời mời; đẩy ca gấp (phí vào ví nền tảng, không trừ hai lần); hồ sơ năng lực (SĐT theo BR-28), chặn/bỏ chặn; admin xác nhận lệnh rút thành công/thất bại.
+- Playwright 5 kịch bản (Phase 1, 2 và `demo.spec.ts` đi trọn kịch bản 5 phút với 4 thiết bị) đạt 2 vòng liên tiếp; `npm run race`, `npm run ledger:check` đạt.
+- Lighthouse mobile (bản build production): hiệu năng 97–100, trợ năng 100, LCP 1,1–1,6 s, CLS ≤ 0,008, TBT ≤ 200 ms. axe-core: 0 vi phạm serious/critical trên 19 trang × 2 theme. Trang Khám phá vẫn xin vị trí ngay khi mở (Lighthouse cảnh báo `geolocation-on-start`): giữ có chủ đích vì trang là "ca gần bạn", từ chối thì chọn quận.
+- Biểu đồ KPI tự vẽ bằng SVG thay Recharts; 2 màu đã qua bộ kiểm tra bảng màu (dataviz) ở cả hai theme.
+
+Chưa làm được: P3-12 trên URL production và điện thoại thật, tập dượt với cả nhóm và quay video (cần Supabase cloud, Vercel). Đăng nhập Google đã có mã nhưng chưa bật: cần OAuth client của nhóm (§11). Checklist ngày demo cập nhật ở [03 §11](03-System-Architecture-HLD.md).
 
 ---
 
@@ -321,8 +329,10 @@ Trước khi mở pull request: `npm run lint && npm run typecheck && npm test &
 ```bash
 npx supabase login                                  # mở trình duyệt, đăng nhập tài khoản Supabase của nhóm
 npx supabase link --project-ref <dev-project-ref>
-npx supabase db push                                # áp 4 migration
+npx supabase db push                                # áp 5 migration (0001–0005)
 SEED_ENV_FILE=.env.dev npm run seed                 # .env.dev: NEXT_PUBLIC_SUPABASE_URL, SUPABASE_SECRET_KEY, DEMO_PASSWORD của dự án dev
 ```
 
 Sau đó import repo vào Vercel, khai báo biến theo `.env.example` (giá trị của dự án *demo* cho Production, *dev* cho Preview), thêm URL Vercel vào *Authentication → URL Configuration* của Supabase, và đặt secret `APP_URL` cho workflow `keep-alive`.
+
+**Đăng nhập Google** (FR-AUTH-02, tùy chọn): tạo *OAuth client ID* loại *Web application* trên Google Cloud Console, thêm *Authorized redirect URI* `https://<project-ref>.supabase.co/auth/v1/callback` (máy local: `http://127.0.0.1:55321/auth/v1/callback`). Trên Supabase cloud bật *Authentication → Providers → Google* với client ID và secret; ở máy local đặt `SUPABASE_AUTH_EXTERNAL_GOOGLE_CLIENT_ID`, `SUPABASE_AUTH_EXTERNAL_GOOGLE_SECRET` rồi đổi `enabled = true` trong `[auth.external.google]` của `supabase/config.toml`. Cuối cùng đặt `NEXT_PUBLIC_GOOGLE_AUTH=true` để hiện nút *Tiếp tục với Google*; người dùng mới đi qua onboarding để chọn vai trò.

@@ -645,6 +645,8 @@ Idempotency-Key: 8a1c2e3f-4b5d-4c6e-9f70-81a2b3c4d5e6
 ```
 Số liệu ví dụ lấy từ một lần chạy thật của `fn_demo_reset(30)` với 2 quán, 16 người làm.
 
+Bản cài đặt trả thêm `previous` (cùng các chỉ số, không có `daily`) cho kỳ liền trước cùng độ dài, để thẻ số hiện chênh lệch; `daily` luôn đủ một phần tử mỗi ngày (ngày không có ca có số 0). Khoảng ngày 1–366 ngày, `from` ≤ `to`, nếu sai → `400`.
+
 #### Các endpoint quản trị khác
 
 | Endpoint | Body | Phản hồi, lỗi |

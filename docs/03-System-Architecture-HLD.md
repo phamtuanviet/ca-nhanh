@@ -39,7 +39,7 @@
 | Lấy dữ liệu phía client | TanStack Query + supabase-js Realtime | Cache, tự làm mới khi có sự kiện realtime | 0đ |
 | Bản đồ | Leaflet + react-leaflet + tile OpenStreetMap; Nominatim để tìm địa chỉ | Không cần API key; Nominatim tối đa 1 yêu cầu/giây, không autocomplete | 0đ |
 | QR | `qrcode` (vẽ QR trên kiosk); `@zxing/browser` hoặc BarcodeDetector API (quét) | Chạy hoàn toàn trên trình duyệt | 0đ |
-| Biểu đồ | Recharts | Dashboard KPI | 0đ |
+| Biểu đồ | SVG tự vẽ (`components/charts/daily-chart.tsx`, thay Recharts ở Phase 3 để gói JS nhỏ và kiểm soát được chi tiết theo skill dataviz) | Dashboard KPI | 0đ |
 | Đăng nhập | **Supabase Auth**: email/mật khẩu, Google OAuth, JWT | Tích hợp sẵn với RLS | Free: 50.000 MAU |
 | CSDL | **Supabase Postgres** + PostGIS + btree_gist + **pg_cron** | Quan hệ, địa lý, ràng buộc loại trừ, lập lịch trong CSDL | Free: 500 MB |
 | Realtime | **Supabase Realtime** (`postgres_changes`, tôn trọng RLS) | Đẩy thay đổi không cần tự dựng WebSocket | Free (giới hạn kết nối đồng thời, đủ cho demo) |
@@ -499,10 +499,11 @@ jobs:
 
 | Thời điểm | Việc cần làm |
 |---|---|
-| T − 1 ngày | Mở dashboard Supabase (khôi phục nếu dự án bị tạm dừng); reset dữ liệu demo; chạy thử toàn bộ kịch bản trên 3 thiết bị; sạc đầy máy; chuẩn bị 4G dự phòng; quay video dự phòng 1 phút |
-| T − 15 phút | `GET /api/v1/health`; đặt `min_lead_minutes = 2`; trên tablet bấm *Đặt vị trí quán tại đây* rồi mở kiosk (bật Wake Lock); đăng nhập sẵn 2 điện thoại; cấp quyền camera và vị trí |
+| T − 1 ngày | Mở dashboard Supabase (khôi phục nếu dự án bị tạm dừng); *Admin → Demo → Reset dữ liệu demo* (gõ RESET); chạy thử toàn bộ kịch bản trên 3 thiết bị; sạc đầy máy; chuẩn bị 4G dự phòng; quay video dự phòng 1 phút. Lệnh `npx playwright test tests/e2e/demo.spec.ts` chạy đúng kịch bản 5 phút trên URL thật (`E2E_BASE_URL=…`) |
+| T − 15 phút | `GET /api/v1/health`; *Admin → Demo → Đặt 2 phút cho demo* (`min_lead_minutes = 2`); trên tablet bấm *Đặt vị trí quán tại đây* rồi mở kiosk (bật Wake Lock); đăng nhập sẵn 2 điện thoại; cấp quyền camera và vị trí. Chuẩn bị mốc 4:20: cho Bình nhận một ca, *Tua tới giờ kết thúc* rồi *Chạy bộ hẹn giờ ngay* để Bình bị tạm khóa vì vắng mặt |
 | Nếu GPS trong phòng kém | Bật cờ `demo_mode.skip_geofence = true` và nói rõ với hội đồng đây là cờ demo |
-| Sau demo | Tắt `demo_mode` nếu để công khai link; xoay `QR_SIGNING_SECRET` nếu đã chiếu màn hình có khóa |
+| Chạy tập rồi chạy thật | Không cần reset giữa hai lần: từ migration `0005`, *Tua tới giờ kết thúc* lần hai cho cùng người làm không vướng ca đã tua trước đó |
+| Sau demo | *Đặt lại 30 phút*; tắt `demo_mode` nếu để công khai link; xoay `QR_SIGNING_SECRET` nếu đã chiếu màn hình có khóa |
 
 ---
 
