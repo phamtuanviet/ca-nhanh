@@ -1,0 +1,354 @@
+[
+ {
+  "name": "hero-barista",
+  "kind": "wide",
+  "alt": "Barista đang pha cà phê bằng máy espresso trong quán",
+  "place": null,
+  "credit": {
+   "author": "Blake Wisz",
+   "page": "https://unsplash.com/photos/barista-preparing-coffee-with-espresso-machine-in-cafe-vCtvn_xqoyA",
+   "license": "Unsplash License"
+  },
+  "blurDataURL": "data:image/webp;base64,UklGRtQAAABXRUJQVlA4IMgAAADwBACdASoYABAAPu1iqU2ppaOiMAgBMB2JZQCdIMg1AKoOcE6Bh6szjUxdJu9F6cgA/om8KBgiVi5cMIMdFSC7DCyKn77PYu0a/nK1nvPZV4dLXe0XOXg5+Tjm7ctNznWUjEuuH4nVTj56ec8p/cB1MlnlX28Bs5phxGxJhuq9jHLmkUwHNuDABQFe+Iy0A//L67nUgHyjf+j7Do/7+I5cDoefjQmgpjI8P6+4+M+LbMqNZR46ou/1njDz+34g+rLZtkoydETAAA==",
+  "variants": [
+   {
+    "file": "hero-barista-1600.avif",
+    "width": 1600,
+    "height": 1067,
+    "bytes": 55958
+   },
+   {
+    "file": "hero-barista-1600.webp",
+    "width": 1600,
+    "height": 1067,
+    "bytes": 79490
+   },
+   {
+    "file": "hero-barista-960.avif",
+    "width": 960,
+    "height": 640,
+    "bytes": 33129
+   },
+   {
+    "file": "hero-barista-960.webp",
+    "width": 960,
+    "height": 640,
+    "bytes": 42236
+   },
+   {
+    "file": "hero-barista-480.avif",
+    "width": 480,
+    "height": 320,
+    "bytes": 15814
+   },
+   {
+    "file": "hero-barista-480.webp",
+    "width": 480,
+    "height": 320,
+    "bytes": 17664
+   }
+  ]
+ },
+ {
+  "name": "waiter-serving",
+  "kind": "wide",
+  "alt": "Nhân viên phục vụ cầm máy tính bảng ghi món cho khách",
+  "place": null,
+  "credit": {
+   "author": "Vitaly Gariev",
+   "page": "https://unsplash.com/photos/a-waiter-serves-food-to-a-couple-in-a-restaurant-M5Rd9A4d64A",
+   "license": "Unsplash License"
+  },
+  "blurDataURL": "data:image/webp;base64,UklGRrIAAABXRUJQVlA4IKYAAABwBACdASoYAA4APu1iqU2ppaOiMAgBMB2JQBOgMZUYH6tfnHbDYspg/uOjAAD+RNnXyXkM7xlJzLfIg8CdJtZwEL4jOLNV/bPgNWeRnQ4UiUizsXj/VcDA1xGdspCdXx4sJ5WBZueiR4Fr6hqONnF7lCxif+GUq5BLWG8zW4FY0/2mPiMbN7bwKdYeDZs//Aq6n8B6rVPwtHWMIMQUMiWB77JdFAAA",
+  "variants": [
+   {
+    "file": "waiter-serving-1600.avif",
+    "width": 1600,
+    "height": 900,
+    "bytes": 68504
+   },
+   {
+    "file": "waiter-serving-1600.webp",
+    "width": 1600,
+    "height": 900,
+    "bytes": 89070
+   },
+   {
+    "file": "waiter-serving-960.avif",
+    "width": 960,
+    "height": 540,
+    "bytes": 39264
+   },
+   {
+    "file": "waiter-serving-960.webp",
+    "width": 960,
+    "height": 540,
+    "bytes": 46488
+   },
+   {
+    "file": "waiter-serving-480.avif",
+    "width": 480,
+    "height": 270,
+    "bytes": 17295
+   },
+   {
+    "file": "waiter-serving-480.webp",
+    "width": 480,
+    "height": 270,
+    "bytes": 18194
+   }
+  ]
+ },
+ {
+  "name": "hanoi-night",
+  "kind": "wide",
+  "alt": "Phố Hà Nội buổi tối với các cửa hàng sáng đèn",
+  "place": "Hà Nội",
+  "credit": {
+   "author": "Rogier Schutte",
+   "page": "https://unsplash.com/photos/assorted-color-concrete-stores-at-night-uP0ngYARhlU",
+   "license": "Unsplash License"
+  },
+  "blurDataURL": "data:image/webp;base64,UklGRp4AAABXRUJQVlA4IJIAAADQAwCdASoYABAAPu1iqU2ppaOiMAgBMB2JYwC7ACP7G2IB6th3QAAA/vE8uLrSf6s+p6Bxj1UF9lyGU+SAwoGiXLZKm0z4Gh72pSaUlbMG8GnR4+tKsRJZSL4TeWL+C2A9WSj5W517Pq7T0A6aQzApuvxXfN0JcjIdoX/MSzRASO1gVSwtqFhnm/LlVgdDnmgAAA==",
+  "variants": [
+   {
+    "file": "hanoi-night-1600.avif",
+    "width": 1600,
+    "height": 1067,
+    "bytes": 145918
+   },
+   {
+    "file": "hanoi-night-1600.webp",
+    "width": 1600,
+    "height": 1067,
+    "bytes": 168720
+   },
+   {
+    "file": "hanoi-night-960.avif",
+    "width": 960,
+    "height": 640,
+    "bytes": 77007
+   },
+   {
+    "file": "hanoi-night-960.webp",
+    "width": 960,
+    "height": 640,
+    "bytes": 82178
+   },
+   {
+    "file": "hanoi-night-480.avif",
+    "width": 480,
+    "height": 320,
+    "bytes": 27569
+   },
+   {
+    "file": "hanoi-night-480.webp",
+    "width": 480,
+    "height": 320,
+    "bytes": 26922
+   }
+  ]
+ },
+ {
+  "name": "iced-coffee",
+  "kind": "wide",
+  "alt": "Ly cà phê sữa đá trên bàn gỗ",
+  "place": "Vĩnh Long",
+  "credit": {
+   "author": "frank mckenna",
+   "page": "https://unsplash.com/photos/glass-of-iced-coffee-jODz47eM1w8",
+   "license": "Unsplash License"
+  },
+  "blurDataURL": "data:image/webp;base64,UklGRnYAAABXRUJQVlA4IGoAAAAwBACdASoYABAAPu1iqU2ppaQiMAgBMB2JYgCdACFeS7YfeoYsaGzqS8AA/ujbs324X0miFoGBsNloU0zZNYBKC0+qWVlrMTL0j4iVrI7cITBLZCB0tmbJNmG7FlSHpyE3sz0WUTmClNAA",
+  "variants": [
+   {
+    "file": "iced-coffee-1600.avif",
+    "width": 1600,
+    "height": 1065,
+    "bytes": 22632
+   },
+   {
+    "file": "iced-coffee-1600.webp",
+    "width": 1600,
+    "height": 1065,
+    "bytes": 35672
+   },
+   {
+    "file": "iced-coffee-960.avif",
+    "width": 960,
+    "height": 639,
+    "bytes": 11871
+   },
+   {
+    "file": "iced-coffee-960.webp",
+    "width": 960,
+    "height": 639,
+    "bytes": 17488
+   },
+   {
+    "file": "iced-coffee-480.avif",
+    "width": 480,
+    "height": 320,
+    "bytes": 5010
+   },
+   {
+    "file": "iced-coffee-480.webp",
+    "width": 480,
+    "height": 320,
+    "bytes": 6866
+   }
+  ]
+ },
+ {
+  "name": "cafe-saigon",
+  "kind": "cover",
+  "alt": "Nội thất quán cà phê có cửa sổ vòm",
+  "place": "TP. Hồ Chí Minh",
+  "credit": {
+   "author": "Tai Bui",
+   "page": "https://unsplash.com/photos/a-man-sitting-at-a-table-in-a-coffee-shop-gJjS9ZXNhhE",
+   "license": "Unsplash License"
+  },
+  "blurDataURL": "data:image/webp;base64,UklGRtYAAABXRUJQVlA4IMoAAADwBACdASoYABAAPu1iqU2ppaOiMAgBMB2JbACdMoAltxigKiuQxWdWQLmwZVTYHAAA/qrm344vDupTzbrfMdD/s/qXKKa32gLZ0l3mOxq72MqKEdXt+izxUG2LnATRDXri1+d/ck8I1SKjIlxV26ke03wA+Ar4o3dgCGbJnkUgJrfvL/Cu32/3c8IL1+4MpNFpCMH8ElAidyUaQ3FIpzs4fIVMFaJsnKfMB186T3BjlnVWYLJn9TElmcr5/+2d1sIgMn9H51pOAAAA",
+  "variants": [
+   {
+    "file": "cafe-saigon-960.avif",
+    "width": 960,
+    "height": 640,
+    "bytes": 50169
+   },
+   {
+    "file": "cafe-saigon-960.webp",
+    "width": 960,
+    "height": 640,
+    "bytes": 62552
+   },
+   {
+    "file": "cafe-saigon-480.avif",
+    "width": 480,
+    "height": 320,
+    "bytes": 20780
+   },
+   {
+    "file": "cafe-saigon-480.webp",
+    "width": 480,
+    "height": 320,
+    "bytes": 23218
+   }
+  ]
+ },
+ {
+  "name": "cafe-traditional",
+  "kind": "cover",
+  "alt": "Quán cà phê phong cách truyền thống với bàn ghế gỗ",
+  "place": null,
+  "credit": {
+   "author": "Elist Nguyen",
+   "page": "https://unsplash.com/photos/dimly-lit-cafe-interior-with-tables-and-chairs-iuOjmlOu88o",
+   "license": "Unsplash License"
+  },
+  "blurDataURL": "data:image/webp;base64,UklGRoQAAABXRUJQVlA4IHgAAAAQBACdASoYABAAPu1iqU2ppaOiMAgBMB2JYwCdAB6W+jtjPo4F+F22AAD+73vAO/M2IH9/UdjY/9++XhHkpwUPEn5rjuM42ppFrqbN/YkuA+BQl9e0/lcd5ngDm+PNkmkgNXjC+f72otUCsPw9KFMVNTD1tqfQAAA=",
+  "variants": [
+   {
+    "file": "cafe-traditional-960.avif",
+    "width": 960,
+    "height": 640,
+    "bytes": 36488
+   },
+   {
+    "file": "cafe-traditional-960.webp",
+    "width": 960,
+    "height": 640,
+    "bytes": 43674
+   },
+   {
+    "file": "cafe-traditional-480.avif",
+    "width": 480,
+    "height": 320,
+    "bytes": 11426
+   },
+   {
+    "file": "cafe-traditional-480.webp",
+    "width": 480,
+    "height": 320,
+    "bytes": 13254
+   }
+  ]
+ },
+ {
+  "name": "cafe-garden",
+  "kind": "cover",
+  "alt": "Quán cà phê có cửa sổ nhìn ra vườn",
+  "place": null,
+  "credit": {
+   "author": "Thomas Hoang",
+   "page": "https://unsplash.com/photos/a-cozy-cafe-interior-with-a-garden-view-cBKmiL_aM50",
+   "license": "Unsplash License"
+  },
+  "blurDataURL": "data:image/webp;base64,UklGRsAAAABXRUJQVlA4ILQAAACwBACdASoYABAAPu1iqU2ppaOiMAgBMB2JQBWAMX6Z0t35gxbKQxqaaEmSSZ8gAP7uQ3NcRiKJou/lafFsMJr2D8iVf93cQSv0pSQrFzkThCxO2jDNIiUVoH1Op7bTrGObSepaji9NdbqW0xf58xyqGWn38GCfXHyb6BbRtehUjNkqZleElQeNlXtX1TYbJuvY2n3COHvMuf/wjONtN+rkhPeNrkTeC/WjlF5fjycDn1WQAAA=",
+  "variants": [
+   {
+    "file": "cafe-garden-960.avif",
+    "width": 960,
+    "height": 640,
+    "bytes": 43820
+   },
+   {
+    "file": "cafe-garden-960.webp",
+    "width": 960,
+    "height": 640,
+    "bytes": 54932
+   },
+   {
+    "file": "cafe-garden-480.avif",
+    "width": 480,
+    "height": 320,
+    "bytes": 19486
+   },
+   {
+    "file": "cafe-garden-480.webp",
+    "width": 480,
+    "height": 320,
+    "bytes": 21226
+   }
+  ]
+ },
+ {
+  "name": "banh-mi",
+  "kind": "cover",
+  "alt": "Ổ bánh mì kẹp rau thơm trên bàn gỗ",
+  "place": null,
+  "credit": {
+   "author": "Ben Lei",
+   "page": "https://unsplash.com/photos/bread-with-green-vegetable-on-brown-wooden-table-ubBWnvrsARk",
+   "license": "Unsplash License"
+  },
+  "blurDataURL": "data:image/webp;base64,UklGRpQAAABXRUJQVlA4IIgAAAAwBACdASoYABAAPu1iqU2ppaOiMAgBMB2JZACdACPthNR0Z8bA/8r23KAA/ql4f2musIhrV1j3dJc/6K4GDlLTOhLKOGeHqHJg9JLsthTUfJdL6gwcPjFWrbFKBezxrE/kcawBcfZzyf/C1DtO1+yfDWRhXxPRteho2yEw8SE6BLWZI/RlAAAA",
+  "variants": [
+   {
+    "file": "banh-mi-960.avif",
+    "width": 960,
+    "height": 640,
+    "bytes": 27508
+   },
+   {
+    "file": "banh-mi-960.webp",
+    "width": 960,
+    "height": 640,
+    "bytes": 34192
+   },
+   {
+    "file": "banh-mi-480.avif",
+    "width": 480,
+    "height": 320,
+    "bytes": 11781
+   },
+   {
+    "file": "banh-mi-480.webp",
+    "width": 480,
+    "height": 320,
+    "bytes": 12922
+   }
+  ]
+ }
+]

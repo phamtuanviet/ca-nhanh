@@ -1,0 +1,15 @@
+{
+  "name": "Ca Nhanh",
+  "short_name": "Ca Nhanh",
+  "description": "Chợ ca làm theo giờ: đăng ca, có người, nhận lương trong ngày.",
+  "lang": "vi",
+  "start_url": "/worker",
+  "display": "standalone",
+  "background_color": "#F4F7FD",
+  "theme_color": "#2D58F2",
+  "icons": [
+    { "src": "/brand/app-icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/brand/app-icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/brand/app-icon-maskable.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "maskable" }
+  ]
+}

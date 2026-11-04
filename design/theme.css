@@ -1,0 +1,173 @@
+/* Ca Nhanh — theme tokens. Nguồn: Design System "Hệ thiết kế Ca Nhanh". Đã kiểm tra tương phản WCAG ở cả hai theme. */
+/* Dùng: @import "./theme.css" trong app/globals.css (sau @import "tailwindcss"). */
+:root {
+  --lam-50: #F3F7FE; --lam-100: #E5EDFF; --lam-200: #C8D9FF; --lam-300: #A2BEFF; --lam-400: #789FFE; --lam-500: #4E7DFE; --lam-600: #2D58F2; --lam-700: #2145D0; --lam-800: #1632A3; --lam-900: #0E2374; --lam-950: #05134C;
+  --nghe-50: #FFF5EB; --nghe-100: #FEE9D3; --nghe-200: #FFCF9D; --nghe-300: #FFAB41; --nghe-400: #E18D0A; --nghe-500: #BC7507; --nghe-600: #985E06; --nghe-700: #7E4D04; --nghe-800: #613900; --nghe-900: #442801; --nghe-950: #2A1700;
+  --ngoc-50: #E8FDF1; --ngoc-100: #D1F8E3; --ngoc-200: #A8EBC9; --ngoc-300: #70D7A8; --ngoc-400: #2FBE87; --ngoc-500: #06A06E; --ngoc-600: #058158; --ngoc-700: #066A48; --ngoc-800: #035136; --ngoc-900: #013925; --ngoc-950: #012215;
+  --son-50: #FEF4F3; --son-100: #FFE6E3; --son-200: #FFCBC5; --son-300: #FEA39A; --son-400: #FE6F66; --son-500: #EA4240; --son-600: #C62328; --son-700: #A6161C; --son-800: #800C13; --son-900: #5D0409; --son-950: #3C0103;
+  --muc-50: #F4F7FD; --muc-100: #E9EDF5; --muc-200: #D4D9E4; --muc-300: #B9BFCD; --muc-400: #9CA3B4; --muc-500: #7F889A; --muc-600: #656D7F; --muc-700: #51596B; --muc-800: #3C4454; --muc-900: #282F3E; --muc-950: #151B2A; --muc-975: #0A1121; --muc-990: #050917;
+  --bg: #F4F7FD;
+  --surface: #FFFFFF;
+  --surface-raised: #FFFFFF;
+  --surface-sunken: #EEF2F8;
+  --border: #D4D9E4;
+  --border-strong: #7F889A;
+  --text: #151B2A;
+  --text-muted: #656D7F;
+  --primary: #2D58F2;
+  --primary-hover: #2145D0;
+  --on-primary: #FFFFFF;
+  --primary-soft: #F3F7FE;
+  --on-primary-soft: #1632A3;
+  --spark: #FFAB41;
+  --spark-hover: #E18D0A;
+  --on-spark: #050917;
+  --spark-text: #7E4D04;
+  --spark-soft: #FFF5EB;
+  --on-spark-soft: #613900;
+  --money: #066A48;
+  --money-soft: #E8FDF1;
+  --on-money-soft: #035136;
+  --live: #06A06E;
+  --danger: #C62328;
+  --on-danger: #FFFFFF;
+  --danger-soft: #FEF4F3;
+  --on-danger-soft: #A6161C;
+  --focus-ring: #2D58F2;
+  --perforation: #B9BFCD;
+  --scrim: rgba(5, 9, 23, 0.48);
+  --radius-control: 10px; --radius-card: 16px; --radius-ticket: 18px; --radius-sheet: 24px; --radius-pill: 999px;
+  --space-1: 4px; --space-2: 8px; --space-3: 12px; --space-4: 16px; --space-5: 20px; --space-6: 24px; --space-8: 32px; --space-10: 40px; --space-12: 48px; --space-16: 64px;
+  --font-sans: var(--font-be-vietnam-pro), "Be Vietnam Pro", system-ui, sans-serif;
+  --font-display: var(--font-big-shoulders), "Big Shoulders Display", "Arial Narrow", sans-serif;
+  --shadow-card: 0 1px 2px rgba(10, 17, 33, 0.06), 0 8px 24px -14px rgba(29, 59, 168, 0.28);
+  --shadow-pop: 0 2px 4px rgba(10, 17, 33, 0.06), 0 18px 40px -16px rgba(29, 59, 168, 0.38);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not(.light):not([data-theme="light"]) {
+    --bg: #0A1121;
+    --surface: #151B2A;
+    --surface-raised: #282F3E;
+    --surface-sunken: #050917;
+    --border: #3C4454;
+    --border-strong: #7F889A;
+    --text: #F4F7FD;
+    --text-muted: #B9BFCD;
+    --primary: #789FFE;
+    --primary-hover: #A2BEFF;
+    --on-primary: #050917;
+    --primary-soft: #05134C;
+    --on-primary-soft: #C8D9FF;
+    --spark: #FFAB41;
+    --spark-hover: #FFCF9D;
+    --on-spark: #050917;
+    --spark-text: #FFAB41;
+    --spark-soft: #2A1700;
+    --on-spark-soft: #FFCF9D;
+    --money: #2FBE87;
+    --money-soft: #012215;
+    --on-money-soft: #A8EBC9;
+    --live: #2FBE87;
+    --danger: #FE6F66;
+    --on-danger: #050917;
+    --danger-soft: #3C0103;
+    --on-danger-soft: #FFCBC5;
+    --focus-ring: #A2BEFF;
+    --perforation: #51596B;
+    --scrim: rgba(0, 0, 0, 0.6);
+    --shadow-card: 0 1px 0 rgba(255, 255, 255, 0.04), 0 10px 26px -14px rgba(0, 0, 0, 0.7);
+    --shadow-pop: 0 2px 0 rgba(255, 255, 255, 0.05), 0 20px 44px -16px rgba(0, 0, 0, 0.8);
+    color-scheme: dark;
+  }
+}
+.dark, [data-theme="dark"] {
+  --bg: #0A1121;
+  --surface: #151B2A;
+  --surface-raised: #282F3E;
+  --surface-sunken: #050917;
+  --border: #3C4454;
+  --border-strong: #7F889A;
+  --text: #F4F7FD;
+  --text-muted: #B9BFCD;
+  --primary: #789FFE;
+  --primary-hover: #A2BEFF;
+  --on-primary: #050917;
+  --primary-soft: #05134C;
+  --on-primary-soft: #C8D9FF;
+  --spark: #FFAB41;
+  --spark-hover: #FFCF9D;
+  --on-spark: #050917;
+  --spark-text: #FFAB41;
+  --spark-soft: #2A1700;
+  --on-spark-soft: #FFCF9D;
+  --money: #2FBE87;
+  --money-soft: #012215;
+  --on-money-soft: #A8EBC9;
+  --live: #2FBE87;
+  --danger: #FE6F66;
+  --on-danger: #050917;
+  --danger-soft: #3C0103;
+  --on-danger-soft: #FFCBC5;
+  --focus-ring: #A2BEFF;
+  --perforation: #51596B;
+  --scrim: rgba(0, 0, 0, 0.6);
+  --shadow-card: 0 1px 0 rgba(255, 255, 255, 0.04), 0 10px 26px -14px rgba(0, 0, 0, 0.7);
+  --shadow-pop: 0 2px 0 rgba(255, 255, 255, 0.05), 0 20px 44px -16px rgba(0, 0, 0, 0.8);
+  color-scheme: dark;
+}
+
+/* shadcn/ui: ánh xạ tên biến của shadcn sang token Ca Nhanh (giữ nguyên tên token gốc để code đọc theo nghĩa) */
+:root, .dark, [data-theme="dark"] {
+  --background: var(--bg); --foreground: var(--text); --card: var(--surface); --card-foreground: var(--text);
+  --popover: var(--surface-raised); --popover-foreground: var(--text); --primary-foreground: var(--on-primary);
+  --secondary: var(--primary-soft); --secondary-foreground: var(--on-primary-soft); --muted: var(--surface-sunken); --muted-foreground: var(--text-muted);
+  --accent: var(--primary-soft); --accent-foreground: var(--on-primary-soft); --destructive: var(--danger); --input: var(--border-strong); --ring: var(--focus-ring);
+  --chart-1: var(--lam-600); --chart-2: var(--nghe-400); --chart-3: var(--ngoc-500); --chart-4: var(--son-500); --chart-5: var(--muc-500); --radius: var(--radius-control);
+}
+
+/* Tailwind v4: sinh class như bg-surface, text-money, bg-spark, rounded-ticket, font-display */
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-raised: var(--surface-raised);
+  --color-surface-sunken: var(--surface-sunken);
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+  --color-text: var(--text);
+  --color-text-muted: var(--text-muted);
+  --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
+  --color-on-primary: var(--on-primary);
+  --color-primary-soft: var(--primary-soft);
+  --color-on-primary-soft: var(--on-primary-soft);
+  --color-spark: var(--spark);
+  --color-spark-hover: var(--spark-hover);
+  --color-on-spark: var(--on-spark);
+  --color-spark-text: var(--spark-text);
+  --color-spark-soft: var(--spark-soft);
+  --color-on-spark-soft: var(--on-spark-soft);
+  --color-money: var(--money);
+  --color-money-soft: var(--money-soft);
+  --color-on-money-soft: var(--on-money-soft);
+  --color-live: var(--live);
+  --color-danger: var(--danger);
+  --color-on-danger: var(--on-danger);
+  --color-danger-soft: var(--danger-soft);
+  --color-on-danger-soft: var(--on-danger-soft);
+  --color-focus-ring: var(--focus-ring);
+  --color-perforation: var(--perforation);
+  --color-scrim: var(--scrim);
+  --color-lam-50: var(--lam-50); --color-lam-100: var(--lam-100); --color-lam-200: var(--lam-200); --color-lam-300: var(--lam-300); --color-lam-400: var(--lam-400); --color-lam-500: var(--lam-500); --color-lam-600: var(--lam-600); --color-lam-700: var(--lam-700); --color-lam-800: var(--lam-800); --color-lam-900: var(--lam-900); --color-lam-950: var(--lam-950);
+  --color-nghe-50: var(--nghe-50); --color-nghe-100: var(--nghe-100); --color-nghe-200: var(--nghe-200); --color-nghe-300: var(--nghe-300); --color-nghe-400: var(--nghe-400); --color-nghe-500: var(--nghe-500); --color-nghe-600: var(--nghe-600); --color-nghe-700: var(--nghe-700); --color-nghe-800: var(--nghe-800); --color-nghe-900: var(--nghe-900); --color-nghe-950: var(--nghe-950);
+  --color-ngoc-50: var(--ngoc-50); --color-ngoc-100: var(--ngoc-100); --color-ngoc-200: var(--ngoc-200); --color-ngoc-300: var(--ngoc-300); --color-ngoc-400: var(--ngoc-400); --color-ngoc-500: var(--ngoc-500); --color-ngoc-600: var(--ngoc-600); --color-ngoc-700: var(--ngoc-700); --color-ngoc-800: var(--ngoc-800); --color-ngoc-900: var(--ngoc-900); --color-ngoc-950: var(--ngoc-950);
+  --color-son-50: var(--son-50); --color-son-100: var(--son-100); --color-son-200: var(--son-200); --color-son-300: var(--son-300); --color-son-400: var(--son-400); --color-son-500: var(--son-500); --color-son-600: var(--son-600); --color-son-700: var(--son-700); --color-son-800: var(--son-800); --color-son-900: var(--son-900); --color-son-950: var(--son-950);
+  --color-muc-50: var(--muc-50); --color-muc-100: var(--muc-100); --color-muc-200: var(--muc-200); --color-muc-300: var(--muc-300); --color-muc-400: var(--muc-400); --color-muc-500: var(--muc-500); --color-muc-600: var(--muc-600); --color-muc-700: var(--muc-700); --color-muc-800: var(--muc-800); --color-muc-900: var(--muc-900); --color-muc-950: var(--muc-950); --color-muc-975: var(--muc-975); --color-muc-990: var(--muc-990);
+  --color-background: var(--background); --color-foreground: var(--foreground); --color-card: var(--card); --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover); --color-popover-foreground: var(--popover-foreground); --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary); --color-secondary-foreground: var(--secondary-foreground); --color-muted: var(--muted); --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent); --color-accent-foreground: var(--accent-foreground); --color-destructive: var(--destructive); --color-input: var(--input); --color-ring: var(--ring);
+  --font-sans: var(--font-be-vietnam-pro), "Be Vietnam Pro", system-ui, sans-serif;
+  --font-display: var(--font-big-shoulders), "Big Shoulders Display", "Arial Narrow", sans-serif;
+  --radius-control: 10px; --radius-card: 16px; --radius-ticket: 18px; --radius-sheet: 24px;
+  --shadow-card: var(--shadow-card); --shadow-pop: var(--shadow-pop);
+}
