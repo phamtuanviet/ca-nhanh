@@ -5,7 +5,7 @@
 | Phiên bản | 1.0 (bản để review) · 04/11/2026 |
 | CSDL | PostgreSQL 15+ trên Supabase (đã kiểm thử trên PostgreSQL 17 + PostGIS 3.5) |
 | Mã nguồn SQL | [`docs/sql/`](sql/): `0001_schema.sql` · `0002_functions.sql` · `0003_security.sql` · `0004_cron_realtime.sql` · `test/` |
-| Kết quả kiểm thử | **92/92** kiểm tra đạt; tranh chỗ đồng thời đạt (§11) |
+| Kết quả kiểm thử | **103/103** kiểm tra đạt; tranh chỗ đồng thời đạt (§11) |
 | Dựa trên | [01-SRS.md](01-SRS.md) (quy tắc `BR-…`) · [03-HLD](03-System-Architecture-HLD.md) (kiến trúc) |
 
 ---
@@ -206,7 +206,7 @@ erDiagram
 
 **Đọc nhanh các quan hệ chính**
 - Một **ca** có nhiều **booking**; mỗi booking là một người làm giữ một chỗ. `filled_count` = số booking chưa hủy.
-- Một **người làm** không thể có hai booking chồng giờ (ràng buộc `bookings_no_overlap`).
+- Một **người làm** không thể có hai booking còn hiệu lực (đã nhận, đang làm) chồng giờ (ràng buộc `bookings_no_overlap`, migration `0005`).
 - Mỗi người dùng có đúng **một ví**; thêm một ví nền tảng duy nhất (`owner_id` null) để nhận phí.
 - Mọi thay đổi số dư sinh một dòng **sổ cái** trỏ về nguồn gốc (`ref_type`, `ref_id` = ca, booking, lệnh thanh toán).
 
@@ -452,7 +452,7 @@ Ký hiệu: **PK** khóa chính · **FK** khóa ngoại · **UK** duy nhất · 
 
 | Ràng buộc | Định nghĩa | Bảo vệ điều gì |
 |---|---|---|
-| `bookings_no_overlap` | `EXCLUDE USING gist (worker_id WITH =, period WITH &&) WHERE (status NOT IN ('cancelled','no_show'))` | Một người không giữ hai ca chồng giờ, kể cả khi hai yêu cầu đến cùng lúc (FR-BKG-03) |
+| `bookings_no_overlap` | `EXCLUDE USING gist (worker_id WITH =, period WITH &&) WHERE (status IN ('confirmed','checked_in'))` (từ `0005`) | Một người không giữ hai ca chồng giờ, kể cả khi hai yêu cầu đến cùng lúc (FR-BKG-03) |
 | `bookings_one_active_per_shift` | `UNIQUE (shift_id, worker_id) WHERE status <> 'cancelled'` | Không nhận một ca hai lần |
 | `shifts_filled_chk` | `filled_count BETWEEN 0 AND headcount` | Không bao giờ vượt số chỗ (lưới an toàn cuối cùng phía sau khóa dòng) |
 | `shifts_time_chk`, `shifts_break_chk` | Thời lượng 0–12 giờ, nghỉ nhỏ hơn thời lượng | BR-03 |
@@ -603,7 +603,7 @@ score = 0.40 * greatest(0, 1 - distance / radius)          -- gần
 
 - **pg_cron**: job `ca-nhanh-tick` chạy `select public.fn_cron_tick()` mỗi phút. Kết quả mỗi lần chạy là JSON, ví dụ `{"started": 1, "no_shows": 0, "auto_approved": 0, …}`.
 - **Realtime**: publication `supabase_realtime` gồm `notifications`, `bookings`, `shifts`, `wallets`, `payment_orders` (thiết kế kênh ở [HLD §6](03-System-Architecture-HLD.md)).
-- **Cài đặt trên Supabase**: bật extension `postgis` (schema `extensions`), `btree_gist`, `pg_cron`; chạy lần lượt `0001` → `0004` trong SQL Editor. Nếu PostGIS đã bật ở schema khác `extensions`, đổi tiền tố `extensions.geography` trong `0001` cho khớp.
+- **Cài đặt trên Supabase**: bật extension `postgis` (schema `extensions`), `btree_gist`, `pg_cron`; chạy lần lượt `0001` → `0005` trong SQL Editor. Nếu PostGIS đã bật ở schema khác `extensions`, đổi tiền tố `extensions.geography` trong `0001` cho khớp.
 - **Sinh kiểu TypeScript**: `npm run db:types` (Supabase cục bộ) hoặc `npx supabase gen types typescript --project-id <ref> > lib/database.types.ts`.
 - **pg_safeupdate**: Supabase nạp extension này cho mọi request qua PostgREST, kể cả RPC, nên `UPDATE`/`DELETE` không có `WHERE` bị chặn ("UPDATE requires a WHERE clause"). Câu lệnh cần áp lên cả bảng phải ghi `where true` (như trong `fn_demo_reset`). Bộ kiểm thử SQL chạy bằng psql nên không bắt được lỗi này; `tests/unit/sql-safeupdate.test.ts` kiểm tĩnh mọi migration.
 
@@ -633,7 +633,8 @@ score = 0.40 * greatest(0, 1 - distance / radius)          -- gần
 | RLS và quyền | 10 | Chỉ thấy dữ liệu của mình; không đọc được SĐT, ngân hàng; không ghi trực tiếp; không gọi được `fn_book_shift` |
 | Reset demo | 6 | Lịch sử hợp lý; không ai bị khóa; tiền = điều chỉnh demo |
 | Tua thời gian | 3 | Check-in đúng giờ; check-out đủ 240 phút |
-| **Tổng** | **92** | **Đạt 92/92** |
+| Sửa sau Phase 2 (`0005`) | 11 | Chạy tập rồi demo thật: tua tới giờ kết thúc lần hai cho cùng người làm không vướng ca cũ, vẫn 240 phút; vẫn chặn hai ca còn hiệu lực chồng giờ (cả ở hàm và ràng buộc); không hủy cả ca khi đã có người check-in |
+| **Tổng** | **103** | **Đạt 103/103** |
 
 **Kiểm thử đồng thời** (hai phiên `psql` song song, ca còn 1 chỗ): phiên A nhận ca và giữ transaction 2 giây; phiên B bắt đầu sau 0,5 giây, **bị khóa chờ 1,52 giây**, rồi nhận `SHIFT_FULL`. Kết quả cuối: `full 1/1`, đúng 1 booking.
 
@@ -644,7 +645,7 @@ score = 0.40 * greatest(0, 1 - distance / radius)          -- gần
 ```sql
 -- =====================================================================
 -- 0001_schema.sql — Ca Nhanh: extensions, kiểu liệt kê, bảng, chỉ mục
--- Chạy trên Supabase (PostgreSQL 15+). Thứ tự: 0001 → 0002 → 0003 → 0004
+-- Chạy trên Supabase (PostgreSQL 15+). Thứ tự: 0001 → 0002 → 0003 → 0004 → 0005
 -- =====================================================================
 create extension if not exists postgis    with schema extensions;
 create extension if not exists btree_gist with schema extensions;
@@ -826,7 +827,8 @@ create table public.bookings (
   created_at           timestamptz not null default now(),
   updated_at           timestamptz not null default now(),
   constraint bookings_checkout_chk check (check_out_at is null or check_in_at is null or check_out_at >= check_in_at),
-  -- Một người không thể giữ hai ca chồng giờ nhau (đảm bảo ở mức CSDL, kể cả khi gọi đồng thời)
+  -- Một người không thể giữ hai ca chồng giờ nhau (đảm bảo ở mức CSDL, kể cả khi gọi đồng thời).
+  -- Từ 0005 chỉ áp cho booking còn hiệu lực: where (status in ('confirmed', 'checked_in'))
   constraint bookings_no_overlap exclude using gist (worker_id with =, period with &&)
     where (status not in ('cancelled', 'no_show'))
 );
