@@ -36,8 +36,9 @@ async function destinationFor(userId: string, next: string | null): Promise<stri
     .maybeSingle();
   if (!profile?.onboarded_at) return '/onboarding';
   const home = ROLE_HOME[profile.role];
-  // Chỉ dùng ?next= khi nó thuộc khu vực của chính vai trò đó
-  return next && next.startsWith(home) ? next : home;
+  // Chỉ dùng ?next= khi nó thuộc khu vực của chính vai trò đó (người làm: thêm deep link chấm công /c/…)
+  const allowed = next?.startsWith(home) || (profile.role === 'worker' && next?.startsWith('/c/'));
+  return next && allowed ? next : home;
 }
 
 export async function signIn(_prev: AuthFormState, formData: FormData): Promise<AuthFormState> {

@@ -159,3 +159,35 @@ export const notificationReadSchema = z.union([
   z.object({ ids: z.array(z.number().int()).min(1).max(200) }),
   z.object({ all: z.literal(true) }),
 ]);
+
+// ---------- Chấm công, duyệt, hủy, rút tiền, công cụ demo (Phase 2) ----------
+
+export const attendanceSchema = z.object({
+  token: z.string().min(10, 'Thiếu mã QR').max(200),
+  lat: z.number().min(-90).max(90).optional(),
+  lng: z.number().min(-180).max(180).optional(),
+  accuracy_m: z.number().min(0).max(100_000).optional(),
+});
+
+export const approveSchema = z.object({
+  worked_minutes: z.number().int().min(0).max(960).optional(),
+  note: z.string().trim().max(500).optional(),
+});
+
+export const cancelSchema = z.object({
+  reason: z.string().trim().max(300).optional(),
+});
+
+export const withdrawalSchema = z.object({
+  amount: z.number().int('Số tiền là số nguyên'),
+});
+
+export const fastForwardSchema = z.object({
+  shift_id: uuid,
+  to: z.enum(['start', 'end']),
+});
+
+export const demoResetSchema = z.object({
+  days: z.number().int().min(1).max(90).default(60),
+  shop_balance: z.number().int().min(0).max(100_000_000).default(2_000_000),
+});
