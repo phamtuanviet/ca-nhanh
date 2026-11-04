@@ -1,3 +1,5 @@
+import { fmtDateTime, fmtTime } from './format';
+
 // Danh mục mã lỗi API, khớp docs/05-API-Specification.md §9 (kiểm bằng tests/unit/errors.test.ts).
 // Hàm fn_* trong CSDL dùng RAISE EXCEPTION '<MÃ>' (SQLSTATE P0001) nên message của lỗi chính là mã.
 
@@ -104,14 +106,8 @@ const PLACEHOLDERS: Record<string, string> = {
 
 function formatValue(placeholder: string, value: unknown): string {
   if ((placeholder === '{thời điểm}' || placeholder === '{giờ}') && typeof value === 'string') {
-    const date = new Date(value);
-    if (!Number.isNaN(date.getTime())) {
-      return date.toLocaleString('vi-VN', {
-        timeZone: 'Asia/Ho_Chi_Minh',
-        hour: '2-digit',
-        minute: '2-digit',
-        ...(placeholder === '{thời điểm}' ? { day: '2-digit', month: '2-digit' } : {}),
-      });
+    if (!Number.isNaN(new Date(value).getTime())) {
+      return placeholder === '{thời điểm}' ? fmtDateTime(value) : fmtTime(value);
     }
   }
   return String(value);

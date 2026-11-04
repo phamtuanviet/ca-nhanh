@@ -13,6 +13,15 @@ export const serverEnv = {
   demoPassword: () => required('DEMO_PASSWORD'),
 };
 
+/** Tài khoản nhận tiền nạp ví (VietQR) */
+export function platformBank() {
+  return {
+    bin: process.env.PLATFORM_BANK_BIN ?? '970436',
+    account_no: process.env.PLATFORM_BANK_ACCOUNT ?? '0011000000000',
+    account_name: process.env.PLATFORM_BANK_NAME ?? 'CA NHANH DEMO',
+  };
+}
+
 /** Chế độ demo: hiện đăng nhập nhanh và công cụ demo. Giữ đồng bộ với cờ `demo_mode` trong CSDL. */
 export function isDemoMode(): boolean {
   return process.env.DEMO_MODE === 'true';

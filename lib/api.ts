@@ -1,5 +1,8 @@
 import 'server-only';
-import { ZodError } from 'zod';
+import { createClient as createSupabaseClient, type SupabaseClient } from '@supabase/supabase-js';
+import { ZodError, type z } from 'zod';
+import type { Database } from '@/lib/database.types';
+import { publicEnv } from '@/lib/env';
 import { ApiError, ERRORS, fromPostgrest } from '@/lib/errors';
 import type { Role } from '@/lib/roles';
 import { adminClient } from '@/lib/supabase/admin';
@@ -106,6 +109,34 @@ async function userIdFromRequest(
   if (error || !data?.claims?.sub) return null;
   const email = typeof data.claims.email === 'string' ? data.claims.email : null;
   return { id: data.claims.sub, email };
+}
+
+/**
+ * Client Supabase mang danh tính người gọi (Bearer hoặc cookie), cho các truy vấn cần `auth.uid()`
+ * trong CSDL như `search_shifts`. Gọi sau requireUser().
+ */
+export async function requestClient(req: Request): Promise<SupabaseClient<Database>> {
+  const authorization = req.headers.get('authorization');
+  if (authorization?.toLowerCase().startsWith('bearer ')) {
+    const { supabaseUrl, supabaseKey } = publicEnv();
+    return createSupabaseClient<Database>(supabaseUrl, supabaseKey, {
+      global: { headers: { Authorization: authorization } },
+      auth: { persistSession: false, autoRefreshToken: false },
+    });
+  }
+  return createClient();
+}
+
+/** Đọc body JSON và kiểm tra bằng schema Zod (lỗi → 400 VALIDATION_ERROR) */
+export async function readJson<S extends z.ZodType>(req: Request, schema: S): Promise<z.output<S>> {
+  const text = await req.text();
+  return schema.parse(text ? JSON.parse(text) : {});
+}
+
+/** Đọc query string và kiểm tra bằng schema Zod */
+export function readQuery<S extends z.ZodType>(req: Request, schema: S): z.output<S> {
+  const params = Object.fromEntries(new URL(req.url).searchParams);
+  return schema.parse(params);
 }
 
 /** Xác thực bằng cookie phiên hoặc `Authorization: Bearer`, rồi kiểm tra vai trò (03 §7.1) */
