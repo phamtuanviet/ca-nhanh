@@ -6,7 +6,7 @@
 | Thời lượng | Phase 0 (3 ngày) + 3 phase × 1 tuần → sẵn sàng demo ngày **30/11/2026**. Dời các mốc nếu ngày bảo vệ khác |
 | Nhóm (giả định) | 4 người: **FE-A** (màn hình người làm), **FE-B** (màn hình quán và admin), **FS** (API, Supabase, realtime), **QA** (component chung, kiểm thử, CI, công cụ demo). Nhóm 3 người thì QA kiêm FS |
 | Đầu vào | [01 SRS](01-SRS.md) · [02 Use Case & Story](02-Use-Cases-User-Stories.md) · [03 HLD](03-System-Architecture-HLD.md) · [04 CSDL](04-ERD-Database-Schema.md) + [`sql/`](sql/) · [05 API](05-API-Specification.md) · [06 Giao diện](06-UI-Design-System.md) + [`design/`](../design/) |
-| Đã có sẵn | CSDL và 53 hàm nghiệp vụ đã kiểm thử 92/92; hệ thiết kế (token, CSS component, hàm chuyển động, asset). Chưa có mã ứng dụng |
+| Đã có sẵn | CSDL và 53 hàm nghiệp vụ đã kiểm thử 92/92 (nay 103/103 sau migration `0005` ở Phase 2); hệ thiết kế (token, CSS component, hàm chuyển động, asset). Chưa có mã ứng dụng |
 
 ---
 
@@ -76,7 +76,7 @@ gantt
 | Môi trường | Ứng dụng | CSDL | Dùng để |
 |---|---|---|---|
 | Local | `npm run dev` | Supabase local (`npx supabase start`, cần Docker) hoặc dự án *dev* | Lập trình hằng ngày |
-| Kiểm thử CSDL | | Docker PostGIS: `bash docs/sql/test/run_tests.sh` | 92 kiểm tra nghiệp vụ, chạy cả trong CI |
+| Kiểm thử CSDL | | Docker PostGIS: `bash docs/sql/test/run_tests.sh` | 103 kiểm tra nghiệp vụ, chạy cả trong CI |
 | Preview | Vercel Preview cho mỗi pull request | Dự án Supabase *dev* | Review |
 | Demo | Vercel Production | Dự án Supabase *demo* | Thuyết trình |
 
@@ -178,7 +178,7 @@ Phụ thuộc chính: P1-09 và P1-10 cần P1-05, P1-06 (giao diện làm trư�
 2. Gherkin của US-09, US-12, US-22 ([02 §6.1–6.3](02-Use-Cases-User-Stories.md)) đạt.
 3. Script tranh chỗ: 20 yêu cầu song song cho ra đúng 1 × 201 và 19 × 409 `SHIFT_FULL`.
 4. Lighthouse mobile trang `/worker`: LCP < 2,5 s, CLS < 0,1.
-5. CI xanh: unit, E2E, 92/92 kiểm tra CSDL.
+5. CI xanh: unit, E2E, 92/92 kiểm tra CSDL (nay 103/103).
 
 **Trạng thái (04/11/2026)**: P1-01 → P1-18 đã làm trên nhánh `feat/p1-vong-cho`, kiểm tra trên Supabase cục bộ với bản build production:
 - 47 kiểm tra API bằng curl theo Gherkin 6.1–6.3 (nạp ví, webhook gửi lại, đăng ca, thiếu tiền, tìm ca, nhận ca, trùng giờ, phân quyền) và kiểm tra onboarding (dưới 18 tuổi, metadata `role=admin`).
@@ -211,6 +211,16 @@ Chưa làm được: tiêu chí 1 trên URL production và P1-19 với điện t
 | P2-12 | Mốc demo nội bộ: đoạn 1:40–3:10 | Cả nhóm | 0,25 ngày | Có biên bản và danh sách lỗi |
 
 **Tiêu chí kết thúc Phase 2**: Gherkin [02 §6.4–6.8](02-Use-Cases-User-Stories.md) đạt; QR cũ và check-in ngoài vùng bị từ chối với đúng thông điệp; số dư 3 ví khớp sổ cái sau E2E; đoạn 1:40–3:10 chạy trên production.
+
+**Trạng thái (04/11/2026)**: P2-01 → P2-11 đã làm trên nhánh `feat/p2-cham-cong-tien`, kiểm tra trên Supabase cục bộ với bản build production:
+- 54 kiểm tra API bằng curl theo Gherkin 6.4–6.8 và 6.11: mã kiosk, QR cũ (`QR_EXPIRED`), QR quán khác, quét từ xa 1,5 km, không có GPS, check-in 2 lần, hủy cả ca khi đã có người check-in, check-out 240 phút = 120.000đ, điều chỉnh không lý do, quyết toán đúng 3 ví, rút tiền (thiếu `Idempotency-Key`, gửi lại cùng khóa, quá số dư, chưa có ngân hàng), hủy sát giờ 2 điểm, hủy sớm 0 điểm, quán hủy bồi thường 60.000đ, vắng mặt 4 điểm và tạm khóa, phân quyền tua giờ.
+- P2-09: bộ hẹn giờ hiện đúng trên giao diện và thông báo (nhắc ca đúng một lần, vắng mặt → banner tạm khóa và lịch sử, quên check-out → "Hệ thống đã check-out giúp bạn" và nhãn *Tự check-out* ở trang Giờ công, quá 12 giờ → tự duyệt, tiền vào ví); `pg_cron` chạy mỗi phút.
+- P2-12 (mô phỏng bằng 4 trình duyệt: chị Lan, kiosk, Minh, An): đoạn 1:40–3:10 đạt 28/28 bước, chạy hai lần liên tiếp không reset (chạy tập rồi chạy thật). Quán thấy Minh *Đã đến* sau khoảng 1,1 giây; tiền vào ví Minh sau khoảng 0,8 giây kể từ lúc bấm *Duyệt*; rút tiền "Đang xử lý" 1,8 giây rồi "Thành công".
+- Playwright 4 kịch bản (Phase 1 + 2) đạt 3 vòng liên tiếp; `npm run race` đạt; `npm run ledger:check` đạt I1–I5 sau mọi lần chạy và đã thêm vào job E2E của CI.
+- Migration `0005` (103/103 kiểm tra CSDL): chống trùng giờ chỉ áp cho booking còn hiệu lực, vì trước đó lần "Tua tới giờ kết thúc" thứ hai của cùng người làm (chạy tập rồi demo) bị `BOOKING_OVERLAP`; `fn_cancel_shift` không hủy ca đã có người check-in.
+- Next 16.4: đọc phiên gọi `connection()` trước (Supabase so hạn token với giờ hiện tại); mỗi trang có `loading.tsx` để chuyển trang hiện khung ngay (hết cảnh báo *instant navigation* trong dev).
+
+Chưa làm được: chạy đoạn 1:40–3:10 trên URL production và điện thoại thật (cần Supabase cloud và Vercel, §11). Trang *Công cụ demo* của admin (reset, chạy bộ hẹn giờ) vẫn là P3-06; API đã có.
 
 ---
 

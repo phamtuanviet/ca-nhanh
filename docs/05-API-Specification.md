@@ -420,7 +420,7 @@ Chỉ trả ca `open` chưa bắt đầu; ẩn ca của quán đã chặn ngư�
 { "reason": "Quán mất điện" }
 // 200 → ca với status "cancelled", hold_amount 0
 ```
-Lỗi: `409 INVALID_STATE` (ca đã bắt đầu, đã hủy hoặc hết hạn).
+Lỗi: `409 INVALID_STATE` (ca đã bắt đầu, đã hủy hoặc hết hạn, hoặc đã có người check-in sớm: check-in mở trước giờ bắt đầu 30 phút; `fn_cancel_shift` chặn từ migration `0005`).
 
 #### `POST /shifts/{shiftId}/boost`
 Không có body. `200` ca với `is_urgent: true`. Lỗi: `409 INVALID_STATE` (ca không ở trạng thái `open`), `422 INSUFFICIENT_BALANCE`.

@@ -488,7 +488,7 @@ HTTPS (TLS) cho mọi lời gọi; WebSocket bảo mật (WSS) cho Realtime; JSO
 | NFR-USA-03 | Khả dụng | Tương phản màu đạt WCAG 2.1 AA; form có nhãn; điều khiển được bằng bàn phím | Lighthouse Accessibility |
 | NFR-USA-04 | Khả dụng | Cài được như PWA (manifest, icon, service worker) | Chrome Android "Thêm vào màn hình chính" |
 | NFR-MNT-01 | Bảo trì | TypeScript strict; kiểu CSDL sinh tự động; migration đánh số phiên bản; ESLint/Prettier | CI |
-| NFR-MNT-02 | Bảo trì | Kiểm thử: unit (tính tiền, token QR), kịch bản SQL (đã có, 92 kiểm tra), E2E luồng chính (Playwright) | CI |
+| NFR-MNT-02 | Bảo trì | Kiểm thử: unit (tính tiền, token QR), kịch bản SQL (đã có, 103 kiểm tra), E2E luồng chính (Playwright) | CI |
 | NFR-PORT-01 | Tương thích | Chrome/Safari/Edge/Firefox mới nhất; iOS 16+, Android 10+ | Thử thủ công |
 | NFR-COST-01 | Chi phí | Chi phí vận hành demo **0đ/tháng**; không dùng IaaS | Hóa đơn Vercel/Supabase |
 | NFR-SCL-01 | Mở rộng | Nâng lên gói trả phí không phải viết lại mã (xem HLD §12) | Review kiến trúc |
@@ -504,7 +504,7 @@ HTTPS (TLS) cho mọi lời gọi; WebSocket bảo mật (WSS) cho Realtime; JSO
 4. QR của quán khác, QR hết hạn hoặc quét từ xa đều bị từ chối với thông điệp rõ ràng, và được ghi log.
 5. Hủy sát giờ thì thấy điểm phạt; vắng mặt thì bị tạm khóa nhận ca.
 6. Dashboard admin có ≥ 30 ngày dữ liệu, hiển thị đủ KPI ở FR-ADM-01.
-7. Kịch bản kiểm thử SQL `docs/sql/test/run_tests.sh` đạt 100% (hiện tại: **92/92**).
+7. Kịch bản kiểm thử SQL `docs/sql/test/run_tests.sh` đạt 100% (hiện tại: **103/103**).
 8. Toàn bộ chạy trên gói miễn phí, chi phí 0đ.
 
 ---

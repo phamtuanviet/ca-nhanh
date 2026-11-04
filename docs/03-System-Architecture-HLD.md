@@ -175,7 +175,7 @@ ca-nhanh/
 │   ├── qr-token.ts · vietqr.ts · errors.ts · money.ts · geo.ts
 │   ├── validators/*.ts                 # Zod schema dùng chung
 │   └── realtime/use-realtime.ts
-├── supabase/migrations/                # chép từ docs/sql/0001…0004
+├── supabase/migrations/                # chép từ docs/sql/0001…0005
 ├── public/ manifest.webmanifest · icons · sw.js
 └── tests/ unit · e2e
 ```
@@ -427,7 +427,7 @@ Ghi chú: `postgres_changes` kiểm tra RLS cho từng người đăng ký nên 
 | Môi trường | Ứng dụng | CSDL | Mục đích |
 |---|---|---|---|
 | Local | `next dev` | Supabase local (`npx supabase start`, cần Docker) hoặc dự án *dev* trên cloud | Phát triển |
-| Kiểm thử CSDL | — | Docker PostGIS + `docs/sql/test/run_tests.sh` | Chạy 92 kiểm tra nghiệp vụ, không cần Supabase |
+| Kiểm thử CSDL | — | Docker PostGIS + `docs/sql/test/run_tests.sh` | Chạy 103 kiểm tra nghiệp vụ, không cần Supabase |
 | Preview | Vercel Preview (mỗi pull request) | Dự án Supabase *dev* | Review |
 | Demo | Vercel Production `*.vercel.app` | Dự án Supabase *demo* (gói Free cho phép 2 dự án) | Thuyết trình |
 
@@ -435,7 +435,7 @@ Ghi chú: `postgres_changes` kiểm tra RLS cho từng người đăng ký nên 
 
 1. **Supabase**: tạo dự án, region *Southeast Asia (Singapore)*.
 2. *Database → Extensions*: bật `postgis` (schema `extensions`), `btree_gist`, `pg_cron`.
-3. *SQL Editor*: chạy lần lượt `docs/sql/0001_schema.sql` → `0002_functions.sql` → `0003_security.sql` → `0004_cron_realtime.sql`. Hoặc chép vào `supabase/migrations/` rồi chạy `supabase link` + `supabase db push`.
+3. *SQL Editor*: chạy lần lượt `docs/sql/0001_schema.sql` → `0002_functions.sql` → `0003_security.sql` → `0004_cron_realtime.sql` → `0005_phase2_fixes.sql`. Hoặc chép vào `supabase/migrations/` rồi chạy `supabase link` + `supabase db push`.
 4. *Authentication*: bật Email; với demo, tắt *Confirm email* (hoặc cấu hình SMTP Resend). Bật Google với Client ID/Secret từ Google Cloud Console, redirect `https://<project-ref>.supabase.co/auth/v1/callback`. Ở *URL Configuration*, đặt Site URL là URL Vercel và thêm URL preview.
 5. **Tài khoản demo**: `npm run seed` (`scripts/seed.ts`, đặt `SEED_ENV_FILE` để trỏ sang dự án khác) dùng Admin API `auth.admin.createUser({ email, password, email_confirm: true, user_metadata: { role, full_name } })` cho 2 chủ quán và khoảng 30 người làm; gọi `fn_complete_onboarding` cho từng tài khoản; tạo quán; gán admin bằng `update profiles set role = 'admin' where id = '<uuid>'`.
 6. Sinh dữ liệu: `select fn_demo_reset(60, 2000000);` (60 ngày lịch sử, mỗi quán có sẵn 2.000.000đ).
@@ -478,7 +478,7 @@ jobs:
 
 | Mức | Công cụ | Phạm vi | Trạng thái |
 |---|---|---|---|
-| CSDL (nghiệp vụ) | psql + Docker PostGIS | 92 kiểm tra: đăng ký, onboarding, nạp, đăng ca, nhận ca, tranh chỗ, hủy, điểm phạt, QR + geofence, quyết toán, bồi thường, rút, khiếu nại, KYC, RLS, bất biến tiền, reset demo, tua thời gian | **Đạt 92/92** |
+| CSDL (nghiệp vụ) | psql + Docker PostGIS | 103 kiểm tra: đăng ký, onboarding, nạp, đăng ca, nhận ca, tranh chỗ, hủy, điểm phạt, QR + geofence, quyết toán, bồi thường, rút, khiếu nại, KYC, RLS, bất biến tiền, reset demo, tua thời gian | **Đạt 92/92** |
 | Đồng thời | 2 phiên psql song song | Tranh chỗ cuối cùng | **Đạt** (B chờ 1,52 giây rồi nhận `SHIFT_FULL`) |
 | Unit | Vitest | Ký/kiểm token QR (cửa sổ ±1), dựng URL VietQR, ánh xạ lỗi, định dạng tiền, Zod schema | Cần viết |
 | API | Vitest + Supabase local | Mỗi endpoint: mã thành công + 1–2 mã lỗi chính | Cần viết |

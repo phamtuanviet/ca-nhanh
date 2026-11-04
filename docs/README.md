@@ -15,7 +15,7 @@ Bộ tài liệu này phục vụ việc dựng **bản demo** cho ý tưởng 1
 | 05 | [API Specification](05-API-Specification.md) | 66 endpoint REST `/api/v1`, sự kiện Realtime, webhook thanh toán, đặc tả token QR, URL VietQR, 47 mã lỗi, mẫu Route Handler | Làm frontend và API |
 | 06 | [Giao diện, hình ảnh và công cụ](06-UI-Design-System.md) | Tham khảo đối thủ, bảng màu Lam Ca / Nghệ / Ngọc (đã kiểm tương phản), chữ, motif vé ca, 10 khoảnh khắc chuyển động, ngân sách hiệu năng, agent skill và MCP nên dùng, hình ảnh đã thu thập | Trước khi dựng giao diện |
 | 07 | [Kế hoạch lập trình](07-Implementation-Plan.md) | 4 phase từ 05/11 đến buổi demo 30/11/2026; từng task kèm người làm, ước lượng, tiêu chí xong; lịch từng ngày của Phase 1; quy trình Git/GitHub, Định nghĩa "Xong", cắt phạm vi khi trễ, mẫu issue | Đầu mỗi phase, khi tạo issue |
-| | [`sql/`](sql/) | Migration `0001`–`0004` **đã chạy và kiểm thử** + thư mục `test/` (92 kiểm tra) | Dựng CSDL trên Supabase |
+| | [`sql/`](sql/) | Migration `0001`–`0005` **đã chạy và kiểm thử** + thư mục `test/` (103 kiểm tra) | Dựng CSDL trên Supabase |
 | | [`../design/`](../design/) | `theme.css`, `components.css`, hàm chuyển động, đặc tả 12 component (`COMPONENTS.md`, `components.d.ts`), logo, icon PWA, ảnh OG, 8 ảnh, 6 minh họa, 16 avatar. Xem trực tiếp: [Hệ thiết kế Ca Nhanh](https://claude.ai/artifact/4uG7edwcZRAKQcbZptsw62) | Dựng giao diện (Phase 0–1) |
 
 ## Kiến trúc trong một hình
@@ -78,7 +78,7 @@ Các sơ đồ viết bằng **Mermaid**. GitHub hiển thị trực tiếp. Tro
 | Hạng mục | Trạng thái |
 |---|---|
 | Tài liệu 01–07 | Bản 1.0 để nhóm review |
-| Lược đồ CSDL + hàm nghiệp vụ | Đã viết, đã kiểm thử trên PostgreSQL 17 + PostGIS 3.5 (92/92) |
+| Lược đồ CSDL + hàm nghiệp vụ | Đã viết, đã kiểm thử trên PostgreSQL 17 + PostGIS 3.5 (103/103) |
 | Hệ thiết kế | Xong: token, CSS component, hàm chuyển động, đặc tả component, asset trong `design/` |
 | Mã nguồn ứng dụng Next.js | Phase 0 và Phase 1 xong trên máy (Supabase cục bộ); chưa có dự án Supabase cloud và Vercel. Xem [07 §3–§4](07-Implementation-Plan.md) |
 | Cần nhóm điền | `[Tên nhóm]`, tài khoản ngân hàng demo cho VietQR, khu vực/quận demo |
