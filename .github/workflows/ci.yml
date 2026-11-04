@@ -47,3 +47,41 @@ jobs:
           passed=$(grep -c '^ok' sql-test.log)
           echo "Đạt $passed kiểm tra"
           test "$passed" -ge 92
+
+  e2e:
+    name: E2E (Supabase cục bộ + Playwright)
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Khởi động Supabase cục bộ (Postgres, Auth, Realtime, Storage, REST)
+        run: npx supabase start -x studio,imgproxy,mailpit,postgres-meta,edge-runtime,logflare,vector,supavisor
+      - name: Sinh .env.local và dữ liệu demo
+        run: |
+          npm run env:local
+          npm run seed
+      - run: npm run build
+      - run: npx playwright install --with-deps chromium
+      - name: Chạy server production
+        run: |
+          npm start > server.log 2>&1 &
+          for i in $(seq 1 60); do curl -fsS http://localhost:3000/api/v1/health && exit 0; sleep 2; done
+          cat server.log; exit 1
+      - name: Tranh chỗ cuối (20 yêu cầu song song → 1 × 201, 19 × 409)
+        run: npm run race
+      - name: Playwright
+        run: npx playwright test
+      - name: Log server khi lỗi
+        if: failure()
+        run: tail -n 200 server.log
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: playwright-report
+          path: playwright-report
+          retention-days: 7
