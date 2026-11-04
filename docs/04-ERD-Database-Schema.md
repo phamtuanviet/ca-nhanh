@@ -604,7 +604,8 @@ score = 0.40 * greatest(0, 1 - distance / radius)          -- gần
 - **pg_cron**: job `ca-nhanh-tick` chạy `select public.fn_cron_tick()` mỗi phút. Kết quả mỗi lần chạy là JSON, ví dụ `{"started": 1, "no_shows": 0, "auto_approved": 0, …}`.
 - **Realtime**: publication `supabase_realtime` gồm `notifications`, `bookings`, `shifts`, `wallets`, `payment_orders` (thiết kế kênh ở [HLD §6](03-System-Architecture-HLD.md)).
 - **Cài đặt trên Supabase**: bật extension `postgis` (schema `extensions`), `btree_gist`, `pg_cron`; chạy lần lượt `0001` → `0004` trong SQL Editor. Nếu PostGIS đã bật ở schema khác `extensions`, đổi tiền tố `extensions.geography` trong `0001` cho khớp.
-- **Sinh kiểu TypeScript**: `npx supabase gen types typescript --project-id <ref> > lib/database.types.ts`.
+- **Sinh kiểu TypeScript**: `npm run db:types` (Supabase cục bộ) hoặc `npx supabase gen types typescript --project-id <ref> > lib/database.types.ts`.
+- **pg_safeupdate**: Supabase nạp extension này cho mọi request qua PostgREST, kể cả RPC, nên `UPDATE`/`DELETE` không có `WHERE` bị chặn ("UPDATE requires a WHERE clause"). Câu lệnh cần áp lên cả bảng phải ghi `where true` (như trong `fn_demo_reset`). Bộ kiểm thử SQL chạy bằng psql nên không bắt được lỗi này; `tests/unit/sql-safeupdate.test.ts` kiểm tĩnh mọi migration.
 
 ---
 

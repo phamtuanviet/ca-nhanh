@@ -1,0 +1,10 @@
+docs/
+design/
+supabase/
+public/
+.next/
+node_modules/
+package-lock.json
+AGENTS.md
+*.md
+components/cn/illustrations.generated.ts

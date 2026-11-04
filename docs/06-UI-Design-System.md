@@ -125,7 +125,7 @@ Toàn bộ 87 token và quy tắc dùng ở trang hệ thiết kế; bản cho c
 **Cách đạt**
 - Server Component là mặc định; chỉ những phần có realtime, bản đồ hay chuyển động mới là client component. Leaflet và Motion nạp bằng `dynamic()` ở đúng trang cần.
 - Ảnh nén sẵn AVIF/WebP ba cỡ, có `width`/`height` cố định (tránh CLS) và placeholder mờ. `priority` chỉ cho ảnh LCP.
-- Font: 2 họ chữ, chỉ subset tiếng Việt + Latin, `display: swap`; Big Shoulders chỉ 2 độ đậm.
+- Font: 2 họ chữ, chỉ subset tiếng Việt + Latin, `display: swap`; Big Shoulders nạp dạng font biến thiên (Google Fonts đã gộp bản Display vào họ *Big Shoulders*, trục `opsz` tự chọn nét display ở cỡ lớn).
 - Danh sách dài dùng `content-visibility: auto`; mỗi lần có thay đổi realtime chỉ cập nhật đúng thẻ bị ảnh hưởng, không render lại cả danh sách.
 - **Đo**: Lighthouse chế độ mobile sau mỗi sprint; Chrome DevTools MCP (§8) để agent tự ghi trace và đọc LCP/INP/CLS; Vercel Speed Insights cho số liệu người dùng thật (có hạn mức miễn phí, kiểm tra trang giá).
 

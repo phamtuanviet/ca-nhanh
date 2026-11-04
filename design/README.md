@@ -26,9 +26,10 @@ Bản dùng trong code của **Hệ thiết kế Ca Nhanh** (https://claude.ai/a
    ```
 3. Nạp font trong `app/layout.tsx` (chỉ tải phần tiếng Việt và Latin):
    ```tsx
-   import { Be_Vietnam_Pro, Big_Shoulders_Display } from 'next/font/google';
+   import { Be_Vietnam_Pro, Big_Shoulders } from 'next/font/google';
    const sans = Be_Vietnam_Pro({ subsets: ['vietnamese', 'latin'], weight: ['400', '500', '600', '700', '800'], variable: '--font-be-vietnam-pro', display: 'swap' });
-   const display = Big_Shoulders_Display({ subsets: ['vietnamese', 'latin'], weight: ['700', '800'], variable: '--font-big-shoulders', display: 'swap' });
+   const display = Big_Shoulders({ subsets: ['vietnamese', 'latin'], axes: ['opsz'], variable: '--font-big-shoulders', display: 'swap', adjustFontFallback: false });
+   // Google Fonts đã gộp "Big Shoulders Display" vào họ biến thiên "Big Shoulders" (trục opsz): cỡ chữ lớn tự dùng nét display
    // <html lang="vi" className={`${sans.variable} ${display.variable}`}>
    ```
 4. Theme tối: dùng `next-themes` với `attribute="class"`; `theme.css` đọc cả lớp `.dark` lẫn `[data-theme="dark"]`, và theo `prefers-color-scheme` khi chưa chọn.

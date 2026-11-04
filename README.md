@@ -11,17 +11,22 @@
 | Tài liệu thiết kế 01–07 | Bản 1.0 |
 | CSDL: 17 bảng, 53 hàm, RLS, tác vụ định kỳ | Đã kiểm thử, đạt 92/92 |
 | Hệ thiết kế: màu, chữ, component, chuyển động, ảnh | Xong |
-| Ứng dụng Next.js | Bắt đầu Phase 0 ngày 05/11/2026 |
+| Ứng dụng Next.js | Phase 0 (nền móng) xong trên máy: đăng nhập, phân quyền theo vai trò, khung 3 khu vực, API nền, seed, CI. Chưa deploy |
 
 ## Cấu trúc repo
 
 ```
-docs/      tài liệu 01–07; docs/sql/ là migration đã kiểm thử và bộ kiểm thử
-design/    theme.css, components.css, đặc tả component, hàm chuyển động, logo, ảnh, minh họa, avatar
-.github/   mẫu pull request và mẫu issue
+app/         trang (worker/, shop/, admin/, (auth)/, dev/ui) và REST API app/api/v1/
+components/  ui/ (shadcn/ui theo thương hiệu), cn/ (component Ca Nhanh), layout/
+lib/         supabase/ (client trình duyệt, server, secret), api.ts, errors.ts, auth.ts, roles.ts
+proxy.ts     làm mới phiên Supabase, chuyển hướng theo vai trò
+supabase/    config.toml và migrations/ (chép từ docs/sql)
+scripts/     seed.ts (dữ liệu demo), setup-env.mjs, sync-assets.mjs
+tests/unit/  Vitest
+docs/        tài liệu 01–07; docs/sql/ là migration gốc và bộ 92 kiểm tra
+design/      theme.css, components.css, đặc tả component, hàm chuyển động, logo, ảnh, minh họa, avatar
+.github/     CI, keep-alive, mẫu pull request và issue
 ```
-
-Mã ứng dụng (`app/`, `components/`, `lib/`, `supabase/`) được thêm từ Phase 0.
 
 ## Tài liệu
 
@@ -51,15 +56,25 @@ Next.js (App Router, TypeScript) trên Vercel · Supabase: Postgres + PostGIS + 
 | 3 · Hoàn thiện | 23–28/11 | Bản đồ, đánh giá, KPI, quản trị, PWA, hiệu năng, E2E |
 | Demo | 30/11 | Tập dượt và trình diễn |
 
-## Chạy kiểm thử CSDL
+## Chạy trên máy
 
-Cần Docker:
+Cần Node 22+ và Docker:
 
 ```bash
-bash docs/sql/test/run_tests.sh
+npm install
+npm run db:start     # Supabase cục bộ (Postgres + PostGIS + pg_cron, Auth, Realtime, Storage)
+npm run env:local    # sinh .env.local
+npm run seed         # tài khoản demo, 6 quán, 60 ngày lịch sử
+npm run dev          # http://localhost:3000 → Đăng nhập → Đăng nhập nhanh
 ```
 
-Kết quả mong đợi: 92 dòng bắt đầu bằng `ok`, không có `CHECK FAILED`.
+| Lệnh | Việc |
+|---|---|
+| `npm run lint`, `npm run typecheck`, `npm test` | ESLint, TypeScript, Vitest |
+| `npm run db:test` | 92 kiểm tra nghiệp vụ CSDL trong Docker (không cần Supabase) |
+| `npm run db:reset`, `npm run db:types` | Áp lại migration, sinh lại `lib/database.types.ts` |
+
+Trang `/dev/ui` hiện toàn bộ token và component để kiểm tra giao diện ở hai theme. Đưa lên Supabase cloud và Vercel: [07 §11](docs/07-Implementation-Plan.md).
 
 ## Cách đóng góp
 

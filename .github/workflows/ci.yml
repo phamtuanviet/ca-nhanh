@@ -1,0 +1,49 @@
+name: ci
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  web:
+    name: Lint, typecheck, test, build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: npm test
+      - run: npm run format:check
+      - name: Build
+        run: npm run build
+        env:
+          # Build không gọi Supabase; DEMO_MODE chỉ để trang đăng nhập có nút demo như bản thật
+          DEMO_MODE: 'true'
+
+  db-test:
+    name: Kiểm thử CSDL (92 kiểm tra)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Migration giống bản đã kiểm thử trong docs/sql
+        run: |
+          for n in 1 2 3 4; do
+            cmp docs/sql/000${n}_*.sql supabase/migrations/2026110400000${n}_*.sql
+          done
+      - name: Chạy docs/sql/test/run_tests.sh
+        run: |
+          bash docs/sql/test/run_tests.sh | tee sql-test.log
+          if grep -qE 'CHECK FAILED|ERROR' sql-test.log; then echo "Có kiểm tra thất bại"; exit 1; fi
+          passed=$(grep -c '^ok' sql-test.log)
+          echo "Đạt $passed kiểm tra"
+          test "$passed" -ge 92

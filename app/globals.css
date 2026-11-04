@@ -1,0 +1,39 @@
+@import 'tailwindcss';
+@import 'tw-animate-css';
+@import 'shadcn/tailwind.css';
+/* Hệ thiết kế Ca Nhanh: token màu hai theme, ánh xạ biến shadcn/ui, @theme cho Tailwind, lớp cn-* */
+@import '../design/theme.css';
+@import '../design/components.css';
+
+@custom-variant dark (&:is(.dark *));
+
+/* Bổ sung cho shadcn/ui: bo góc tính theo --radius (= --radius-control của Ca Nhanh) */
+@theme inline {
+  --font-heading: var(--font-sans);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  html {
+    @apply font-sans;
+    -webkit-tap-highlight-color: transparent;
+  }
+  body {
+    @apply bg-background text-foreground antialiased;
+  }
+  button:not(:disabled),
+  [role='button']:not(:disabled) {
+    cursor: pointer;
+  }
+  :focus-visible {
+    outline: 2px solid var(--focus-ring);
+    outline-offset: 2px;
+  }
+}
