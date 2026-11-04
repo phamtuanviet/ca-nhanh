@@ -3,12 +3,15 @@ import Link from 'next/link';
 import { Suspense } from 'react';
 import { DEMO_ACCOUNTS, type DemoAccountKey } from '@/lib/demo';
 import { isDemoMode } from '@/lib/env.server';
+import { GoogleButton } from './google-button';
 import { DemoLogin, LoginForm, LoginNotice } from './login-form';
 
 export const metadata: Metadata = { title: 'Đăng nhập' };
 
 export default function LoginPage() {
   const demo = isDemoMode();
+  // Bật khi đã tạo OAuth client trên Google Cloud và provider Google trong Supabase (07 §11)
+  const google = process.env.NEXT_PUBLIC_GOOGLE_AUTH === 'true';
   const accounts = (Object.keys(DEMO_ACCOUNTS) as DemoAccountKey[]).map((key) => ({
     key,
     ...DEMO_ACCOUNTS[key],
@@ -34,6 +37,15 @@ export default function LoginPage() {
       >
         <LoginNotice />
         <LoginForm />
+        {google ? (
+          <div className="grid gap-4">
+            <div className="flex items-center gap-3 text-xs text-text-muted" aria-hidden>
+              <span className="h-px flex-1 bg-border" /> hoặc{' '}
+              <span className="h-px flex-1 bg-border" />
+            </div>
+            <GoogleButton />
+          </div>
+        ) : null}
       </Suspense>
 
       {demo ? (

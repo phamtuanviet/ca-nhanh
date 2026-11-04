@@ -1,14 +1,14 @@
 'use client';
 
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { ArrowDownLeft, ArrowUpRight, Lock, Plus } from 'lucide-react';
+import { Lock, Plus } from 'lucide-react';
 import { useState } from 'react';
 import { LivePulse } from '@/components/cn/live-pulse';
 import { PageHeader } from '@/components/layout/page';
 import { Button } from '@/components/ui/button';
-import { fmtDateTime, vnd } from '@/lib/format';
+import { TransactionHistory } from '@/components/wallet/transaction-history';
+import { vnd } from '@/lib/format';
 import { api } from '@/lib/http';
-import { TXN_LABEL } from '@/lib/labels';
 import { useRealtime } from '@/lib/realtime/use-realtime';
 import type { WalletView } from '@/lib/services/wallet';
 import { TopupDialog } from './topup-dialog';
@@ -80,48 +80,9 @@ export function ShopWallet({
         </section>
       </div>
 
-      <section className="mt-6 rounded-[var(--radius-card)] bg-surface p-5 shadow-[var(--shadow-card)]">
-        <h2 className="mb-3 font-semibold">Giao dịch gần đây</h2>
-        {wallet.recent_transactions.length === 0 ? (
-          <p className="py-6 text-center text-sm text-text-muted">
-            Chưa có giao dịch nào. Nạp tiền để đăng ca đầu tiên.
-          </p>
-        ) : (
-          <ul className="divide-y divide-border">
-            {wallet.recent_transactions.map((t) => {
-              const delta = t.balance_delta !== 0 ? t.balance_delta : -t.held_delta;
-              const incoming = t.balance_delta > 0;
-              return (
-                <li key={t.id} className="flex items-center gap-3 py-3">
-                  <span
-                    className={`flex size-9 shrink-0 items-center justify-center rounded-full ${
-                      incoming ? 'bg-money-soft text-money' : 'bg-surface-sunken text-text-muted'
-                    }`}
-                  >
-                    {incoming ? (
-                      <ArrowDownLeft className="size-4" aria-hidden />
-                    ) : (
-                      <ArrowUpRight className="size-4" aria-hidden />
-                    )}
-                  </span>
-                  <span className="grid min-w-0 flex-1">
-                    <span className="truncate text-sm font-medium">
-                      {t.note ?? TXN_LABEL[t.type] ?? t.type}
-                    </span>
-                    <span className="text-xs text-text-muted">
-                      {TXN_LABEL[t.type] ?? t.type} · {fmtDateTime(t.created_at)}
-                    </span>
-                  </span>
-                  <span className={`cn-num text-lg ${incoming ? 'text-money' : 'text-text'}`}>
-                    {delta > 0 ? '+' : ''}
-                    {vnd(delta)}
-                  </span>
-                </li>
-              );
-            })}
-          </ul>
-        )}
-      </section>
+      <div className="mt-6">
+        <TransactionHistory variant="shop" />
+      </div>
 
       <TopupDialog
         key={session}

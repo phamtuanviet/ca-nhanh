@@ -2,6 +2,7 @@ import { ArrowLeft, Clock, MapPin, QrCode, Star } from 'lucide-react';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
+import { ReviewButton } from '@/components/booking/review-dialog';
 import { Badge } from '@/components/cn/badge';
 import { SeatSlotsLive } from '@/components/cn/seat-slots-live';
 import { Button } from '@/components/ui/button';
@@ -9,10 +10,17 @@ import { ApiError } from '@/lib/api';
 import { requireRole } from '@/lib/auth';
 import { fmtDateTime, fmtDay, fmtRange, fmtTime, vnd } from '@/lib/format';
 import { BOOKING_STATUS, SHIFT_STATUS } from '@/lib/labels';
-import { demoEnabled } from '@/lib/services/settings';
+import { demoEnabled, getSettings } from '@/lib/services/settings';
 import { getShiftDetail } from '@/lib/services/shifts';
 import { ShopLiveRefresh } from '../../live-refresh';
-import { CancelBookingButton, CancelShiftButton, DemoTimeControls } from './shift-actions';
+import { invitedWorkerIds } from '@/lib/services/invites';
+import {
+  BoostButton,
+  CancelBookingButton,
+  CancelShiftButton,
+  DemoTimeControls,
+  InviteButton,
+} from './shift-actions';
 
 export const metadata: Metadata = { title: 'Chi tiết ca' };
 
@@ -57,7 +65,12 @@ export default async function ShopShiftPage({ params }: PageProps<'/shop/shifts/
     ['open', 'full'].includes(shift.status) &&
     !started &&
     !bookings.some((b) => b.status === 'checked_in');
-  const demo = await demoEnabled();
+  const [demo, invites, settings] = await Promise.all([
+    demoEnabled(),
+    invitedWorkerIds(shift.id),
+    getSettings(),
+  ]);
+  const recruiting = shift.status === 'open' && !started;
   const live = ['open', 'full', 'in_progress'].includes(shift.status);
 
   return (
@@ -90,6 +103,14 @@ export default async function ShopShiftPage({ params }: PageProps<'/shop/shifts/
               icon="shield-check"
             >{`Đã ký quỹ ${vnd(shift.hold_amount)}`}</Badge>
           ) : null}
+          {shift.is_urgent ? (
+            <Badge tone="urgent" icon="zap">
+              Ca gấp
+            </Badge>
+          ) : null}
+          {invites.length > 0 ? (
+            <Badge tone="info">{`Đã mời ${invites.length} người`}</Badge>
+          ) : null}
           {shift.favorites_only_until ? (
             <Badge
               tone="warn"
@@ -106,6 +127,16 @@ export default async function ShopShiftPage({ params }: PageProps<'/shop/shifts/
                   <QrCode aria-hidden /> Mở kiosk QR
                 </Link>
               </Button>
+            ) : null}
+            {recruiting ? (
+              <InviteButton
+                shiftId={shift.id}
+                shopId={shop.id}
+                invited={invites.map((i) => i.worker_id)}
+              />
+            ) : null}
+            {recruiting && !shift.is_urgent ? (
+              <BoostButton shiftId={shift.id} fee={settings.urgent_boost_fee} />
             ) : null}
             {cancellable ? <CancelShiftButton shiftId={shift.id} /> : null}
           </div>
@@ -151,7 +182,12 @@ export default async function ShopShiftPage({ params }: PageProps<'/shop/shifts/
                       </span>
                     )}
                     <span className="grid min-w-0 flex-1">
-                      <span className="truncate font-medium">{b.worker.full_name}</span>
+                      <Link
+                        href={`/shop/workers/${b.worker.id}`}
+                        className="truncate font-medium hover:underline"
+                      >
+                        {b.worker.full_name}
+                      </Link>
                       {line ? (
                         <span className="inline-flex items-center gap-1 text-xs text-text-muted">
                           <MapPin className="size-3 shrink-0" aria-hidden /> {line}
@@ -177,6 +213,14 @@ export default async function ShopShiftPage({ params }: PageProps<'/shop/shifts/
                         <Button asChild size="sm" variant="secondary">
                           <Link href="/shop/timesheets">Duyệt</Link>
                         </Button>
+                      ) : null}
+                      {b.can_review ? (
+                        <ReviewButton
+                          bookingId={b.id}
+                          direction="shop_to_worker"
+                          subject={b.worker.full_name}
+                          context={shift.title}
+                        />
                       ) : null}
                       {b.status === 'confirmed' && !started ? (
                         <CancelBookingButton bookingId={b.id} who={b.worker.full_name} />

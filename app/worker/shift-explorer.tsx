@@ -1,7 +1,8 @@
 'use client';
 
 import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
-import { Crosshair, MapPin } from 'lucide-react';
+import { Crosshair, List, Map as MapIcon, MapPin } from 'lucide-react';
+import dynamic from 'next/dynamic';
 import { useEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react';
 import { EmptyState } from '@/components/cn/empty-state';
 import { LivePulse } from '@/components/cn/live-pulse';
@@ -22,8 +23,11 @@ import { useRealtime } from '@/lib/realtime/use-realtime';
 type Position = { code: string; name: string };
 type Item = {
   shift_id: string;
+  shop_id: string;
   shop_name: string;
   shop_rating: number;
+  lat: number | null;
+  lng: number | null;
   shop_cover_url: string | null;
   title: string;
   start_at: string;
@@ -36,6 +40,12 @@ type Item = {
   is_urgent: boolean;
 };
 type Place = { lat: number; lng: number; label: string; gps: boolean };
+
+// Leaflet chỉ chạy ở trình duyệt: nạp động khi người dùng chuyển sang bản đồ
+const ShiftMap = dynamic(() => import('@/components/worker/shift-map'), {
+  ssr: false,
+  loading: () => <div className="cn-skel h-[60dvh] min-h-80 rounded-[var(--radius-card)]" />,
+});
 
 const DAYS = [
   { value: 'week', label: '7 ngày tới' },
@@ -121,6 +131,7 @@ export function ShiftExplorer({ positions }: { positions: Position[] }) {
   const [radius, setRadius] = useState('5');
   const [sort, setSort] = useState('match');
   const [newIds, setNewIds] = useState<Set<string>>(() => new Set());
+  const [view, setView] = useState<'list' | 'map'>('list');
   const refreshTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   function requestGps() {
@@ -235,6 +246,28 @@ export function ShiftExplorer({ positions }: { positions: Position[] }) {
             label={query.isSuccess ? `Đang tuyển · ${total} ca gần bạn` : 'Đang tải ca gần bạn'}
           />
         </div>
+        <div
+          role="group"
+          aria-label="Cách xem"
+          className="inline-flex rounded-[var(--radius-control)] bg-surface-sunken p-1"
+        >
+          {(
+            [
+              { key: 'list', label: 'Danh sách', Icon: List },
+              { key: 'map', label: 'Bản đồ', Icon: MapIcon },
+            ] as const
+          ).map(({ key, label, Icon }) => (
+            <button
+              key={key}
+              type="button"
+              aria-pressed={view === key}
+              onClick={() => setView(key)}
+              className="inline-flex h-8 items-center gap-1.5 rounded-[calc(var(--radius-control)-4px)] px-3 text-sm font-medium text-text-muted aria-pressed:bg-surface aria-pressed:text-text aria-pressed:shadow-sm"
+            >
+              <Icon className="size-4" aria-hidden /> {label}
+            </button>
+          ))}
+        </div>
       </div>
 
       <div className="flex items-center gap-2 text-sm">
@@ -318,12 +351,27 @@ export function ShiftExplorer({ positions }: { positions: Position[] }) {
             ) : null}
           </EmptyState>
         </div>
+      ) : view === 'map' ? (
+        <div className="grid gap-2">
+          <ShiftMap
+            center={{ lat: place.lat, lng: place.lng, label: place.label }}
+            radiusKm={Number(radius)}
+            shifts={items}
+          />
+          <p className="text-xs text-text-muted">
+            {items.length < total
+              ? `Đang hiện ${items.length}/${total} ca. Xem thêm ở chế độ danh sách.`
+              : `${items.length} ca trong ${radius} km.`}{' '}
+            Bấm ghim để xem ca của quán.
+          </p>
+        </div>
       ) : (
         <ul className="grid gap-4" aria-live="polite">
           {items.map((item) => (
             <li key={item.shift_id}>
               <ShiftTicket
                 href={`/worker/shifts/${item.shift_id}`}
+                transitionName={`shift-${item.shift_id}`}
                 shopName={item.shop_name}
                 shopLogoUrl={item.shop_cover_url}
                 shopRating={item.shop_rating || null}

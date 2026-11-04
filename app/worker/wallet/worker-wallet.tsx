@@ -1,12 +1,13 @@
 'use client';
 
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { ArrowDownLeft, ArrowUpRight, Building2, CheckCircle2, LoaderCircle } from 'lucide-react';
+import { Building2, CheckCircle2, LoaderCircle } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useRef, useState, type FormEvent } from 'react';
 import { toast } from 'sonner';
 import { LivePulse } from '@/components/cn/live-pulse';
 import { WalletOdometer } from '@/components/cn/wallet-odometer';
+import { TransactionHistory } from '@/components/wallet/transaction-history';
 import { PageHeader } from '@/components/layout/page';
 import { Button } from '@/components/ui/button';
 import {
@@ -28,7 +29,6 @@ import {
 import { BANKS, bankByBin } from '@/lib/banks';
 import { asciiUpper, fmtDateTime, vnd } from '@/lib/format';
 import { api, ApiClientError } from '@/lib/http';
-import { TXN_LABEL } from '@/lib/labels';
 import { useRealtime } from '@/lib/realtime/use-realtime';
 import type { PaymentOrderView, WalletView } from '@/lib/services/wallet';
 
@@ -119,47 +119,9 @@ export function WorkerWallet({
         </Button>
       </section>
 
-      <section className="mt-4 rounded-[var(--radius-card)] bg-surface p-5 shadow-[var(--shadow-card)]">
-        <h2 className="mb-3 font-semibold">Giao dịch gần đây</h2>
-        {wallet.recent_transactions.length === 0 ? (
-          <p className="py-6 text-center text-sm text-text-muted">
-            Chưa có giao dịch nào. Làm ca đầu tiên để nhận tiền công.
-          </p>
-        ) : (
-          <ul className="divide-y divide-border">
-            {wallet.recent_transactions.map((t) => {
-              const incoming = t.balance_delta > 0;
-              return (
-                <li key={t.id} className="flex items-center gap-3 py-3">
-                  <span
-                    className={`flex size-9 shrink-0 items-center justify-center rounded-full ${
-                      incoming ? 'bg-money-soft text-money' : 'bg-surface-sunken text-text-muted'
-                    }`}
-                  >
-                    {incoming ? (
-                      <ArrowDownLeft className="size-4" aria-hidden />
-                    ) : (
-                      <ArrowUpRight className="size-4" aria-hidden />
-                    )}
-                  </span>
-                  <span className="grid min-w-0 flex-1">
-                    <span className="truncate text-sm font-medium">
-                      {t.note ?? TXN_LABEL[t.type] ?? t.type}
-                    </span>
-                    <span className="text-xs text-text-muted">
-                      {TXN_LABEL[t.type] ?? t.type} · {fmtDateTime(t.created_at)}
-                    </span>
-                  </span>
-                  <span className={`cn-num text-lg ${incoming ? 'text-money' : 'text-text'}`}>
-                    {incoming ? '+' : ''}
-                    {vnd(t.balance_delta)}
-                  </span>
-                </li>
-              );
-            })}
-          </ul>
-        )}
-      </section>
+      <div className="mt-4">
+        <TransactionHistory variant="worker" />
+      </div>
 
       <BankDialog
         key={`bank-${session}`}

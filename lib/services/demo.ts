@@ -1,5 +1,5 @@
 import 'server-only';
-import { ApiError, type ApiUser, unwrapMaybe } from '@/lib/api';
+import { ApiError, type ApiUser, unwrap, unwrapMaybe } from '@/lib/api';
 import { fromPostgrest } from '@/lib/errors';
 import { adminClient } from '@/lib/supabase/admin';
 import { demoEnabled } from './settings';
@@ -53,3 +53,24 @@ export async function resetDemo(days: number, shopBalance: number) {
   if (error) throw fromPostgrest(error);
   return data;
 }
+
+/** Ca để tua trên trang Công cụ demo: đang diễn ra hoặc bắt đầu trong 48 giờ tới (kèm ca vừa qua 12 giờ) */
+export async function listDemoShifts() {
+  const db = adminClient();
+  const now = Date.now();
+  const rows = unwrap(
+    await db
+      .from('shifts')
+      .select(
+        'id, shop_id, title, start_at, end_at, status, headcount, filled_count, shop:shops(name)',
+      )
+      .in('status', ['open', 'full', 'in_progress'])
+      .gte('end_at', new Date(now - 12 * 3_600_000).toISOString())
+      .lte('start_at', new Date(now + 48 * 3_600_000).toISOString())
+      .order('start_at')
+      .limit(30),
+  );
+  return rows.map(({ shop, ...s }) => ({ ...s, shop_name: shop?.name ?? '' }));
+}
+
+export type DemoShift = Awaited<ReturnType<typeof listDemoShifts>>[number];

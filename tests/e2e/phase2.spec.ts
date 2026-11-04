@@ -1,23 +1,21 @@
-import { createHmac } from 'node:crypto';
-import {
-  devices,
-  expect,
-  test,
-  type Browser,
-  type BrowserContext,
-  type Page,
-} from '@playwright/test';
-import { config } from 'dotenv';
+import { expect, test } from '@playwright/test';
 import { cancelShifts, forgivePenalties } from './cleanup';
-
-config({ path: process.env.SEED_ENV_FILE ?? '.env.local', quiet: true });
+import {
+  balanceOf,
+  FAR,
+  GOC_PHO,
+  kioskToken,
+  login,
+  postShift as post,
+  scan,
+  shopByName,
+  signToken,
+} from './helpers';
 
 // Phase 2 (07 §5, P2-11): đoạn 1:40–3:10 của kịch bản demo. Kiosk → QR cũ bị từ chối → quét từ xa bị
 // từ chối → check-in qua deep link → tua tới giờ kết thúc → check-out → quán duyệt → tiền vào ví → rút.
 // Cần DEMO_MODE=true và cờ demo_mode.enabled (seed bật sẵn) để dùng "Tua tới giờ bắt đầu/kết thúc".
 
-const GOC_PHO = { latitude: 21.0367, longitude: 105.7826, accuracy: 15 };
-const FAR = { latitude: 21.0502, longitude: 105.7826, accuracy: 15 }; // cách quán ~1,5 km
 const createdShifts: string[] = [];
 const penalised: string[] = [];
 
@@ -26,103 +24,16 @@ test.afterEach(async () => {
   await forgivePenalties(penalised.splice(0));
 });
 
-async function login(
-  browser: Browser,
-  account: 'owner' | 'worker_a' | 'worker_b',
-  mobile: boolean,
-) {
-  const context: BrowserContext = await browser.newContext(
-    mobile
-      ? { ...devices['Pixel 7'], geolocation: GOC_PHO, permissions: ['geolocation'] }
-      : { viewport: { width: 1366, height: 900 } },
-  );
-  const page = await context.newPage();
-  await page.goto('/login');
-  await page.locator(`button[value="${account}"]`).click();
-  await page.waitForURL(account === 'owner' ? '**/shop' : '**/worker');
-  return { context, page };
-}
-
-/** Mốc giờ tròn phút, cách hiện tại `minutes` phút */
-function at(minutes: number) {
-  const d = new Date(Date.now() + minutes * 60_000);
-  d.setSeconds(0, 0);
-  return d.toISOString();
-}
-
-/** Ký mã QR như lib/qr-token.ts, để tạo "ảnh chụp QR từ 2 phút trước" */
-function signToken(shopId: string, window: number) {
-  const payload = `v1.${shopId}.${window}`;
-  const sig = createHmac('sha256', process.env.QR_SIGNING_SECRET!)
-    .update(payload)
-    .digest('base64url')
-    .slice(0, 22);
-  return `${payload}.${sig}`;
-}
-
-async function goGocPho(owner: Page) {
-  const res = await owner.request.get('/api/v1/shops/mine');
-  expect(res.ok()).toBeTruthy();
-  const shops = (await res.json()).data as { id: string; name: string }[];
-  const shop = shops.find((s) => s.name === 'Cà phê Góc Phố');
-  expect(shop, 'seed có quán Cà phê Góc Phố').toBeTruthy();
-  return shop!;
-}
-
-/** Chủ quán đăng ca 1 chỗ, 30.000đ/giờ qua API (đăng ca bằng form đã có E2E ở Phase 1) */
-async function postShift(
-  owner: Page,
-  shopId: string,
-  title: string,
-  startIn: number,
-  hours: number,
-) {
-  const res = await owner.request.post('/api/v1/shifts', {
-    data: {
-      shop_id: shopId,
-      position_code: 'barista',
-      title,
-      start_at: at(startIn),
-      end_at: at(startIn + hours * 60),
-      hourly_rate: 30000,
-      headcount: 1,
-    },
-  });
-  expect(res.status(), await res.text()).toBe(201);
-  const id = (await res.json()).data.id as string;
-  createdShifts.push(id);
-  return id;
-}
-
-async function scan(page: Page, token: string) {
-  await page.goto(`/c/${token}`);
-  const title = page.getByTestId('attendance-title');
-  await expect(title).toBeVisible();
-  await expect(title).not.toHaveText(/^Đang/, { timeout: 20_000 });
-  return title;
-}
-
-const kioskToken = async (kiosk: Page) =>
-  (await kiosk.getByTestId('kiosk-qr').getAttribute('data-token'))!;
-
-const balanceOf = async (page: Page) =>
-  Number(
-    ((await page.getByTestId('wallet-balance').getAttribute('aria-label')) ?? '').replace(
-      /\D/g,
-      '',
-    ),
-  );
-
 test('kiosk QR → check-in → tua giờ → check-out → duyệt → ví → rút tiền', async ({ browser }) => {
   test.setTimeout(150_000);
   const tag = Math.random().toString(36).slice(2, 6).toUpperCase();
   const title = `Pha chế E2E ${tag}`;
   const owner = await login(browser, 'owner', false);
   const minh = await login(browser, 'worker_a', true);
-  const shop = await goGocPho(owner.page);
+  const shop = await shopByName(owner.page);
 
   // Ca 4 giờ, bắt đầu sau 40 phút; Minh nhận ca trên giao diện
-  const shiftId = await postShift(owner.page, shop.id, title, 40, 4);
+  const shiftId = await post(owner.page, shop.id, title, 40, 4, createdShifts);
   await minh.page.goto(`/worker/shifts/${shiftId}`);
   await minh.page.getByRole('button', { name: /^Nhận ca · / }).click();
   await expect(minh.page.getByText('Đã nhận ca · Xem Ca của tôi')).toBeVisible();
@@ -207,10 +118,10 @@ test('người làm hủy sát giờ: cảnh báo 2 điểm phạt, lịch sử 
   const title = `Ca hủy E2E ${tag}`;
   const owner = await login(browser, 'owner', false);
   const an = await login(browser, 'worker_b', true);
-  const shop = await goGocPho(owner.page);
+  const shop = await shopByName(owner.page);
 
   // Ca bắt đầu sau khoảng 3 giờ (< 6 giờ → 2 điểm phạt, BR-09)
-  const shiftId = await postShift(owner.page, shop.id, title, 185, 2);
+  const shiftId = await post(owner.page, shop.id, title, 185, 2, createdShifts);
   const booked = await an.page.request.post(`/api/v1/shifts/${shiftId}/bookings`);
   expect(booked.status(), await booked.text()).toBe(201);
   penalised.push((await booked.json()).data.id);

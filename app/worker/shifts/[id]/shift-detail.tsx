@@ -4,7 +4,7 @@ import { ArrowLeft, Clock, MapPin, Navigation, ShieldCheck, Star, Users } from '
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
-import { useState } from 'react';
+import { useState, ViewTransition } from 'react';
 import { toast } from 'sonner';
 import { CancelDialog } from '@/components/booking/cancel-dialog';
 import { Badge } from '@/components/cn/badge';
@@ -116,64 +116,66 @@ export function ShiftDetailView({ detail }: { detail: ShiftDetail }) {
         <ArrowLeft className="size-4" aria-hidden /> Khám phá ca
       </Link>
 
-      <section className="overflow-hidden rounded-[var(--radius-card)] bg-surface shadow-[var(--shadow-card)]">
-        {shop.cover_url ? (
-          // eslint-disable-next-line @next/next/no-img-element -- ảnh bìa đã nén sẵn
-          <img src={shop.cover_url} alt="" className="aspect-[3/1] w-full object-cover" />
-        ) : null}
-        <div className="relative grid gap-3 p-5">
-          <div className="flex items-center gap-2 text-sm text-text-muted">
-            <span className="font-medium text-text">{shop.name}</span>
-            {shop.rating_count > 0 ? (
-              <span className="inline-flex items-center gap-0.5">
-                <Star className="size-3.5 fill-current text-spark" aria-hidden />{' '}
-                {shop.rating_avg.toFixed(1)}
-              </span>
-            ) : null}
-          </div>
-          <h1 className="text-2xl leading-8 font-bold tracking-tight text-balance">
-            {shift.title}
-          </h1>
-          <p className="flex flex-wrap items-center gap-x-3 gap-y-1 text-text-muted">
-            <span className="inline-flex items-center gap-1.5">
-              <Clock className="size-4" aria-hidden />
-              <span className="cn-num text-lg text-text">
-                {fmtRange(shift.start_at, shift.end_at)}
-              </span>
-            </span>
-            <span>{fmtDay(shift.start_at)}</span>
-            {shift.break_minutes > 0 ? <span>nghỉ {shift.break_minutes} phút</span> : null}
-          </p>
-          <div className="flex flex-wrap gap-2">
-            {shift.hold_amount > 0 ? (
-              <Badge tone="deposit" icon="shield-check">
-                Đã ký quỹ
-              </Badge>
-            ) : null}
-            {shift.is_urgent ? (
-              <Badge tone="urgent" icon="zap">
-                Ca gấp
-              </Badge>
-            ) : null}
-            {favoritesUntil ? (
-              <Badge tone="warn" icon="clock">{`Ưu tiên người quen đến ${favoritesUntil}`}</Badge>
-            ) : null}
-          </div>
-          {booked ? (
-            <Stamp
-              text="Đã nhận"
-              animate={outcome === 'booked' && !viewer?.my_booking_id}
-              className="absolute right-5 bottom-5"
-            />
-          ) : isFull ? (
-            <Stamp
-              text="Đủ người"
-              animate={outcome === 'full'}
-              className="absolute right-5 bottom-5"
-            />
+      <ViewTransition name={`shift-${shift.id}`} share="morph" default="none">
+        <section className="overflow-hidden rounded-[var(--radius-card)] bg-surface shadow-[var(--shadow-card)]">
+          {shop.cover_url ? (
+            // eslint-disable-next-line @next/next/no-img-element -- ảnh bìa đã nén sẵn
+            <img src={shop.cover_url} alt="" className="aspect-[3/1] w-full object-cover" />
           ) : null}
-        </div>
-      </section>
+          <div className="relative grid gap-3 p-5">
+            <div className="flex items-center gap-2 text-sm text-text-muted">
+              <span className="font-medium text-text">{shop.name}</span>
+              {shop.rating_count > 0 ? (
+                <span className="inline-flex items-center gap-0.5">
+                  <Star className="size-3.5 fill-current text-spark" aria-hidden />{' '}
+                  {shop.rating_avg.toFixed(1)}
+                </span>
+              ) : null}
+            </div>
+            <h1 className="text-2xl leading-8 font-bold tracking-tight text-balance">
+              {shift.title}
+            </h1>
+            <p className="flex flex-wrap items-center gap-x-3 gap-y-1 text-text-muted">
+              <span className="inline-flex items-center gap-1.5">
+                <Clock className="size-4" aria-hidden />
+                <span className="cn-num text-lg text-text">
+                  {fmtRange(shift.start_at, shift.end_at)}
+                </span>
+              </span>
+              <span>{fmtDay(shift.start_at)}</span>
+              {shift.break_minutes > 0 ? <span>nghỉ {shift.break_minutes} phút</span> : null}
+            </p>
+            <div className="flex flex-wrap gap-2">
+              {shift.hold_amount > 0 ? (
+                <Badge tone="deposit" icon="shield-check">
+                  Đã ký quỹ
+                </Badge>
+              ) : null}
+              {shift.is_urgent ? (
+                <Badge tone="urgent" icon="zap">
+                  Ca gấp
+                </Badge>
+              ) : null}
+              {favoritesUntil ? (
+                <Badge tone="warn" icon="clock">{`Ưu tiên người quen đến ${favoritesUntil}`}</Badge>
+              ) : null}
+            </div>
+            {booked ? (
+              <Stamp
+                text="Đã nhận"
+                animate={outcome === 'booked' && !viewer?.my_booking_id}
+                className="absolute right-5 bottom-5"
+              />
+            ) : isFull ? (
+              <Stamp
+                text="Đủ người"
+                animate={outcome === 'full'}
+                className="absolute right-5 bottom-5"
+              />
+            ) : null}
+          </div>
+        </section>
+      </ViewTransition>
 
       <section className="grid grid-cols-2 gap-3">
         <div className="grid gap-1 rounded-[var(--radius-card)] bg-surface p-4 shadow-[var(--shadow-card)]">

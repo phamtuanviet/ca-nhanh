@@ -299,6 +299,7 @@ Ký hiệu ưu tiên: **M** / **S** / **C** theo MoSCoW. Phạm vi demo tối th
 | `invite.received`, `shift.priority_invite`, `shift.urgent_nearby` | Người làm | "Cà phê Góc Phố mời bạn làm ca" |
 | `wallet.topup_succeeded`, `wallet.withdrawal_*` | Chủ ví | "Nạp tiền thành công +2.000.000đ" |
 | `kyc.reviewed`, `review.received`, `dispute.*`, `shift.expired` | Theo ngữ cảnh | |
+| `shop.reviewed`, `account.locked`, `account.unlocked`, `account.unsuspended` | Chủ quán, người dùng bị admin xử lý | "Đã gỡ tạm khóa nhận ca" |
 
 ---
 

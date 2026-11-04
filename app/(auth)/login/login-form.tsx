@@ -12,6 +12,7 @@ import { demoSignIn, signIn, type AuthFormState } from '../actions';
 const NOTICES: Record<string, string> = {
   locked: 'Tài khoản đang bị khóa. Liên hệ quản trị để được mở lại.',
   demo: 'Không đăng nhập nhanh được. Kiểm tra DEMO_MODE, DEMO_PASSWORD và chạy `npm run seed`.',
+  oauth: 'Không đăng nhập được bằng Google. Thử lại hoặc dùng email và mật khẩu.',
 };
 
 export function LoginNotice() {
