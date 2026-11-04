@@ -4,7 +4,15 @@ import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import Link from 'next/link';
 import { useEffect, useMemo } from 'react';
-import { Circle, CircleMarker, MapContainer, Marker, Popup, TileLayer, useMap } from 'react-leaflet';
+import {
+  Circle,
+  CircleMarker,
+  MapContainer,
+  Marker,
+  Popup,
+  TileLayer,
+  useMap,
+} from 'react-leaflet';
 import { fmtDay, fmtRange, vnd } from '@/lib/format';
 
 export type MapShift = {
@@ -27,7 +35,8 @@ const PRIMARY = '#2D58F2';
 
 /** "150k", "1,2tr" cho nhãn ghim */
 function shortMoney(n: number) {
-  if (n >= 1_000_000) return `${(n / 1_000_000).toLocaleString('vi-VN', { maximumFractionDigits: 1 })}tr`;
+  if (n >= 1_000_000)
+    return `${(n / 1_000_000).toLocaleString('vi-VN', { maximumFractionDigits: 1 })}tr`;
   return `${Math.round(n / 1000)}k`;
 }
 
@@ -125,8 +134,8 @@ export default function ShiftMap({
                           {s.title}
                         </span>
                         <span className="text-[#51596B]">
-                          {fmtRange(s.start_at, s.end_at)} {fmtDay(s.start_at)} · {vnd(s.est_earning)} ·{' '}
-                          {s.filled_count}/{s.headcount}
+                          {fmtRange(s.start_at, s.end_at)} {fmtDay(s.start_at)} ·{' '}
+                          {vnd(s.est_earning)} · {s.filled_count}/{s.headcount}
                         </span>
                       </Link>
                     </li>

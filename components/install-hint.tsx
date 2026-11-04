@@ -67,8 +67,9 @@ export function InstallHint() {
   }
 
   return (
+    // Dải cố định ngay trên thanh tab: hiện sau khi trình duyệt báo cài được nên không đẩy nội dung (CLS)
     <aside
-      className="mb-4 flex items-start gap-3 rounded-[var(--radius-card)] bg-surface p-4 text-sm shadow-[var(--shadow-card)]"
+      className="cn-install-hint fixed inset-x-4 bottom-[calc(4.75rem+env(safe-area-inset-bottom))] z-30 mx-auto flex max-w-xl items-start gap-3 rounded-[var(--radius-card)] border border-border bg-surface-raised p-4 text-sm shadow-[var(--shadow-pop)]"
       aria-label="Cài Ca Nhanh"
     >
       {/* eslint-disable-next-line @next/next/no-img-element -- icon ứng dụng */}

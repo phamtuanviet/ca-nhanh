@@ -124,7 +124,7 @@ export function NotificationBell({ userId, role }: { userId: string; role: Role 
     <DropdownMenu>
       <DropdownMenuTrigger
         className="relative flex size-10 items-center justify-center rounded-full text-text-muted outline-none hover:bg-surface-sunken hover:text-text focus-visible:ring-2 focus-visible:ring-ring"
-        aria-label={unread ? `Thông báo, ${unread} chưa đọc` : 'Thông báo'}
+        aria-label={unread ? `Thông báo, ${unread > 9 ? '9+' : unread} chưa đọc` : 'Thông báo'}
       >
         <Bell className="size-5" aria-hidden />
         {unread > 0 ? (
@@ -166,6 +166,7 @@ export function NotificationBell({ userId, role }: { userId: string; role: Role 
                 {!n.read_at ? (
                   <span
                     className="mt-1.5 size-2 shrink-0 rounded-full bg-primary"
+                    role="img"
                     aria-label="Chưa đọc"
                   />
                 ) : (

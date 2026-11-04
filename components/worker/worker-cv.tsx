@@ -113,7 +113,11 @@ export function WorkerCv({ w, actions }: { w: WorkerProfile; actions?: ReactNode
               <li key={i} className="grid gap-1 py-3">
                 <span className="flex flex-wrap items-center justify-between gap-2 text-sm">
                   <span className="font-medium">{r.shop_name}</span>
-                  <span className="inline-flex items-center gap-0.5" aria-label={`${r.stars} sao`}>
+                  <span
+                    className="inline-flex items-center gap-0.5"
+                    role="img"
+                    aria-label={`${r.stars} sao`}
+                  >
                     {[1, 2, 3, 4, 5].map((n) => (
                       <Star
                         key={n}

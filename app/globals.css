@@ -148,3 +148,13 @@
   outline: 2px solid var(--focus-ring);
   outline-offset: 2px;
 }
+
+/* Gợi ý cài ứng dụng trượt vào phía trên thanh tab */
+.cn-install-hint {
+  animation: cn-arrive var(--cn-dur-sheet) var(--cn-ease-out) both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .cn-install-hint {
+    animation: none;
+  }
+}

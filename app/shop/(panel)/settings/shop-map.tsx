@@ -58,6 +58,8 @@ export default function ShopMap({
       <Marker
         position={[lat, lng]}
         icon={pin}
+        title="Vị trí quán: kéo để đổi"
+        alt="Vị trí quán"
         draggable
         eventHandlers={{
           dragend: (e) => {

@@ -246,9 +246,9 @@ export function ShopEditor({
             />
           </div>
           <div className="grid gap-2">
-            <Label>Loại quán</Label>
+            <Label htmlFor="shop-category">Loại quán</Label>
             <Select value={category} onValueChange={setCategory}>
-              <SelectTrigger className="h-11 w-full">
+              <SelectTrigger id="shop-category" className="h-11 w-full">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>

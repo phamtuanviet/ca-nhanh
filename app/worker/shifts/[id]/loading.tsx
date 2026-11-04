@@ -10,7 +10,7 @@ import { ViewTransition } from 'react';
 export default function Loading() {
   const { id } = useParams<{ id: string }>();
   return (
-    <div className="grid gap-5" aria-busy="true" aria-label="Đang tải">
+    <div className="grid gap-5" role="status" aria-busy="true" aria-label="Đang tải">
       <div className="cn-skel h-5 w-28" />
       <ViewTransition name={`shift-${id}`} share="morph" default="none">
         <div className="overflow-hidden rounded-[var(--radius-card)] bg-surface shadow-[var(--shadow-card)]">
