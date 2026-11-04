@@ -1046,6 +1046,8 @@ end $$;
 
 ### B.2 `fn_book_shift`: nhận ca với khóa dòng
 
+Bản hiện hành nằm trong [`sql/0005_phase2_fixes.sql`](sql/0005_phase2_fixes.sql): kiểm tra trùng giờ chỉ xét booking còn hiệu lực (`confirmed`, `checked_in`).
+
 ```sql
 create or replace function public.fn_book_shift(p_actor uuid, p_shift_id uuid,
                                                 p_source public.booking_source default 'marketplace')
@@ -1094,7 +1096,7 @@ begin
   end if;
 
   if exists (select 1 from public.bookings
-              where worker_id = p_actor and status not in ('cancelled', 'no_show') and period && s.period) then
+              where worker_id = p_actor and status in ('confirmed', 'checked_in') and period && s.period) then
     raise exception 'BOOKING_OVERLAP';
   end if;
 
