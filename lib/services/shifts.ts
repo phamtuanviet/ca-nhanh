@@ -165,6 +165,7 @@ export async function listShopShifts(
         ...shift,
         seats: holders.map((h) => h.worker),
         pending_approval_count: holders.filter((h) => h.status === 'checked_out').length,
+        arrived_count: holders.filter((h) => h.status !== 'confirmed').length,
       };
     }),
     total: count ?? 0,
@@ -325,3 +326,57 @@ export async function searchShifts(
 }
 
 export type ShiftSearchItem = Awaited<ReturnType<typeof searchShifts>>['items'][number];
+
+// ---------- Phase 2: hủy cả ca ----------
+
+/** GET /shifts/{id}/cancel-preview: bồi thường cho người đã nhận (nếu hủy trong 24 giờ) và tiền hoàn */
+export async function shiftCancelPreview(user: Pick<ApiUser, 'id'>, shiftId: string) {
+  const db = adminClient();
+  const row = unwrapMaybe(
+    await db.from('shifts').select(SHIFT_COLUMNS).eq('id', shiftId).maybeSingle(),
+  );
+  if (!row) throw new ApiError('NOT_FOUND');
+  await getOwnedShop(user.id, row.shop_id);
+  if (!['open', 'full'].includes(row.status)) throw new ApiError('INVALID_STATE');
+  const hours = (new Date(row.start_at).getTime() - Date.now()) / 3_600_000;
+  if (hours <= 0) throw new ApiError('INVALID_STATE');
+  await assertNobodyCheckedIn(shiftId);
+  const settings = await getSettings();
+  const { count } = await db
+    .from('bookings')
+    .select('id', { count: 'exact', head: true })
+    .eq('shift_id', shiftId)
+    .eq('status', 'confirmed');
+  const confirmed = count ?? 0;
+  const perWorker =
+    hours < 24 ? Math.round(row.est_wage_per_seat * settings.shop_cancel_compensation_rate) : 0;
+  return {
+    hours_before_start: Math.round(hours * 10) / 10,
+    confirmed_workers: confirmed,
+    compensation_per_worker: perWorker,
+    compensation_total: perWorker * confirmed,
+    release_amount: row.hold_amount,
+  };
+}
+
+/** Đã có người check-in (mở trước giờ bắt đầu 30 phút) thì không hủy cả ca; fn_cancel_shift cũng chặn (0005) */
+async function assertNobodyCheckedIn(shiftId: string) {
+  const { count, error } = await adminClient()
+    .from('bookings')
+    .select('id', { count: 'exact', head: true })
+    .eq('shift_id', shiftId)
+    .eq('status', 'checked_in');
+  if (error) throw fromPostgrest(error);
+  if ((count ?? 0) > 0) throw new ApiError('INVALID_STATE');
+}
+
+/** POST /shifts/{id}/cancel: hủy cả ca, hoàn tạm giữ, bồi thường người đã nhận nếu hủy muộn */
+export async function cancelShift(user: Pick<ApiUser, 'id'>, shiftId: string, reason?: string) {
+  const { data, error } = await adminClient().rpc('fn_cancel_shift', {
+    p_actor: user.id,
+    p_shift_id: shiftId,
+    p_reason: reason || 'Quán hủy ca',
+  });
+  if (error) throw fromPostgrest(error);
+  return presentShift(data);
+}

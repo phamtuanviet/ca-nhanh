@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 import { toast } from 'sonner';
+import { CancelDialog } from '@/components/booking/cancel-dialog';
 import { Badge } from '@/components/cn/badge';
 import { SeatSlots } from '@/components/cn/seat-slots';
 import { ShiftTicket } from '@/components/cn/shift-ticket';
@@ -292,9 +293,24 @@ export function ShiftDetailView({ detail }: { detail: ShiftDetail }) {
       <div className="fixed inset-x-0 bottom-[calc(4rem+env(safe-area-inset-bottom))] z-20 border-t border-border bg-surface/95 px-4 py-3 backdrop-blur">
         <div className="mx-auto max-w-xl">
           {booked ? (
-            <Button asChild size="lg" block variant="secondary">
-              <Link href="/worker/bookings">Đã nhận ca · Xem Ca của tôi</Link>
-            </Button>
+            <div className="flex gap-2">
+              <Button asChild size="lg" block variant="secondary" className="flex-1">
+                <Link href="/worker/bookings">Đã nhận ca · Xem Ca của tôi</Link>
+              </Button>
+              {viewer?.my_booking_id &&
+              viewer.my_booking_status === 'confirmed' &&
+              ['open', 'full'].includes(shift.status) ? (
+                <CancelDialog
+                  target={{ kind: 'booking', id: viewer.my_booking_id }}
+                  onCancelled={() => setOutcome('idle')}
+                  trigger={
+                    <Button size="lg" variant="outline">
+                      Hủy ca
+                    </Button>
+                  }
+                />
+              ) : null}
+            </div>
           ) : isFull ? (
             <Button size="lg" block disabled>
               Ca đã đủ người

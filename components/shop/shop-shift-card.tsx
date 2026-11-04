@@ -1,4 +1,4 @@
-import { ClipboardCheck } from 'lucide-react';
+import { ClipboardCheck, UserCheck } from 'lucide-react';
 import Link from 'next/link';
 import { Badge } from '@/components/cn/badge';
 import { SeatSlotsLive } from '@/components/cn/seat-slots-live';
@@ -32,6 +32,11 @@ export function ShopShiftCard({ shift, shopName }: { shift: ShopShift; shopName?
       <div className="flex flex-wrap items-center justify-between gap-3">
         <SeatSlotsLive headcount={shift.headcount} seats={shift.seats} max={8} />
         <div className="flex flex-wrap gap-2">
+          {shift.arrived_count > 0 && ['full', 'open', 'in_progress'].includes(shift.status) ? (
+            <span className="cn-badge cn-badge--new">
+              <UserCheck aria-hidden /> {shift.arrived_count} đã đến
+            </span>
+          ) : null}
           {shift.pending_approval_count > 0 ? (
             <span className="cn-badge cn-badge--warn">
               <ClipboardCheck aria-hidden /> {shift.pending_approval_count} chờ duyệt

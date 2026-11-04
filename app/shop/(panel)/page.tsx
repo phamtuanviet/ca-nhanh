@@ -1,4 +1,4 @@
-import { Plus } from 'lucide-react';
+import { Plus, QrCode } from 'lucide-react';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { EmptyState } from '@/components/cn/empty-state';
@@ -66,11 +66,20 @@ export default async function ShopTodayPage() {
         title="Hôm nay"
         description={fmtDate(new Date())}
         actions={
-          <Button asChild>
-            <Link href="/shop/shifts/new">
-              <Plus aria-hidden /> Đăng ca
-            </Link>
-          </Button>
+          <div className="flex flex-wrap gap-2">
+            {shops.map((s) => (
+              <Button key={s.id} asChild variant="secondary">
+                <Link href={`/shop/kiosk/${s.id}`} target="_blank">
+                  <QrCode aria-hidden /> {showShop ? `Kiosk ${s.name}` : 'Kiosk QR'}
+                </Link>
+              </Button>
+            ))}
+            <Button asChild>
+              <Link href="/shop/shifts/new">
+                <Plus aria-hidden /> Đăng ca
+              </Link>
+            </Button>
+          </div>
         }
       />
       <div className="mb-4">
@@ -84,7 +93,7 @@ export default async function ShopTodayPage() {
         {[
           { label: 'Ca hôm nay', value: String(todays.length) },
           { label: 'Chỗ đã lấp', value: `${seatsFilled}/${seatsTotal}` },
-          { label: 'Chờ duyệt giờ công', value: String(pending) },
+          { label: 'Chờ duyệt giờ công', value: String(pending), href: '/shop/timesheets' },
           { label: 'Ví khả dụng', value: vnd(wallet.balance), href: '/shop/wallet' },
         ].map((card) => {
           const body = (

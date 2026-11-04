@@ -8,23 +8,10 @@ import { PageHeader } from '@/components/layout/page';
 import { Button } from '@/components/ui/button';
 import { fmtDateTime, vnd } from '@/lib/format';
 import { api } from '@/lib/http';
+import { TXN_LABEL } from '@/lib/labels';
 import { useRealtime } from '@/lib/realtime/use-realtime';
 import type { WalletView } from '@/lib/services/wallet';
 import { TopupDialog } from './topup-dialog';
-
-const TXN_LABEL: Record<string, string> = {
-  topup: 'Nạp tiền',
-  hold: 'Tạm giữ cho ca',
-  release: 'Hoàn tiền tạm giữ',
-  shift_payment: 'Trả tiền công',
-  earning: 'Tiền công',
-  platform_fee: 'Phí nền tảng',
-  boost_fee: 'Phí đẩy ca gấp',
-  compensation: 'Bồi thường',
-  withdrawal: 'Rút tiền',
-  withdrawal_reversal: 'Hoàn tiền rút',
-  adjustment: 'Điều chỉnh',
-};
 
 export function ShopWallet({
   userId,

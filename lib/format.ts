@@ -72,3 +72,15 @@ export function fmtAgo(value: string | Date, now: Date = new Date()): string {
 export function givenName(fullName: string): string {
   return fullName.trim().split(/\s+/).at(-1) ?? fullName;
 }
+
+/** "Nguyễn Văn Minh" → "NGUYEN VAN MINH" (tên chủ tài khoản ngân hàng) */
+export function asciiUpper(text: string): string {
+  return text
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/đ/g, 'd')
+    .replace(/Đ/g, 'D')
+    .toUpperCase()
+    .replace(/\s+/g, ' ')
+    .trim();
+}

@@ -18,3 +18,18 @@ export const BOOKING_STATUS: Record<string, { label: string; tone: BadgeTone }> 
   cancelled: { label: 'Đã hủy', tone: 'neutral' },
   no_show: { label: 'Vắng mặt', tone: 'danger' },
 };
+
+/** Loại giao dịch trong sổ cái ví */
+export const TXN_LABEL: Record<string, string> = {
+  topup: 'Nạp tiền',
+  hold: 'Tạm giữ cho ca',
+  release: 'Hoàn tiền tạm giữ',
+  shift_payment: 'Trả tiền công',
+  earning: 'Tiền công',
+  platform_fee: 'Phí nền tảng',
+  boost_fee: 'Phí đẩy ca gấp',
+  compensation: 'Bồi thường',
+  withdrawal: 'Rút tiền',
+  withdrawal_reversal: 'Hoàn tiền rút',
+  adjustment: 'Điều chỉnh',
+};

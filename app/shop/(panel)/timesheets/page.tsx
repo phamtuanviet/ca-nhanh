@@ -1,17 +1,29 @@
 import type { Metadata } from 'next';
-import { PagePlaceholder } from '@/components/layout/page';
+import { PageHeader } from '@/components/layout/page';
+import { requireRole } from '@/lib/auth';
+import { listPendingTimesheets } from '@/lib/services/bookings';
+import { listMyShops } from '@/lib/services/shops';
+import { ShopLiveRefresh } from '../live-refresh';
+import { TimesheetList } from './timesheet-list';
 
 export const metadata: Metadata = { title: 'Giờ công' };
 
-export default function Page() {
+/** S5: giờ công chờ duyệt (P2-05, US-32, US-33). Duyệt xong tiền vào ví người làm ngay. */
+export default async function TimesheetsPage() {
+  const user = await requireRole('shop_owner');
+  const [items, shops] = await Promise.all([listPendingTimesheets(user.id), listMyShops(user.id)]);
   return (
-    <PagePlaceholder
-      title="Giờ công"
-      description="Duyệt giờ công sau ca"
-      illustration="qr-scan"
-      heading="Giờ công chờ duyệt sẽ hiện ở đây"
-      text="Giờ vào và ra lấy từ lần quét QR; duyệt xong tiền vào ví người làm ngay."
-      task="P2-05"
-    />
+    <>
+      <PageHeader
+        title="Giờ công"
+        description="Giờ vào, ra lấy từ lần quét QR. Duyệt xong là tiền vào ví người làm ngay."
+        actions={
+          shops.length > 0 ? (
+            <ShopLiveRefresh shopIds={shops.map((s) => s.id)} label="Cập nhật trực tiếp" />
+          ) : null
+        }
+      />
+      <TimesheetList items={items} multiShop={shops.length > 1} />
+    </>
   );
 }
