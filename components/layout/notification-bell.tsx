@@ -27,15 +27,61 @@ type Notification = {
   created_at: string;
 };
 
-/** Màn hình mở khi bấm vào thông báo */
-function targetOf(n: Notification, role: Role): string | null {
+/** Màn hình mở khi bấm vào thông báo (P2-10, 01 §3.13) */
+export function targetOf(n: Pick<Notification, 'type' | 'data'>, role: Role): string | null {
   const data = n.data ?? {};
-  if (data.payment_order_id) return role === 'shop_owner' ? '/shop/wallet' : null;
-  if (data.shift_id)
-    return role === 'shop_owner'
+  // Admin chỉ nhận thông báo khiếu nại; trang khiếu nại thuộc khu quản trị (Phase 3)
+  if (role === 'admin') return data.dispute_id ? '/admin' : null;
+  const shop = role === 'shop_owner';
+  const shift = data.shift_id
+    ? shop
       ? `/shop/shifts/${data.shift_id}`
-      : `/worker/shifts/${data.shift_id}`;
-  if (data.booking_id) return role === 'shop_owner' ? '/shop' : '/worker/bookings';
+      : `/worker/shifts/${data.shift_id}`
+    : null;
+  switch (n.type) {
+    // Tiền
+    case 'wallet.topup_succeeded':
+      return '/shop/wallet';
+    case 'earning.credited':
+    case 'wallet.withdrawal_succeeded':
+    case 'wallet.withdrawal_failed':
+      return shop ? '/shop/wallet' : '/worker/wallet';
+    // Chấm công, duyệt giờ công
+    case 'timesheet.pending':
+      return '/shop/timesheets';
+    case 'attendance.checked_in':
+    case 'booking.created':
+    case 'booking.cancelled_by_worker':
+    case 'booking.no_show':
+    case 'shift.expired':
+    case 'invite.declined':
+      return shift ?? '/shop';
+    case 'attendance.auto_checked_out':
+      return '/worker/bookings?tab=pending_approval';
+    // Người làm: ca sắp tới, bị hủy, điểm phạt
+    case 'booking.reminder':
+      return '/worker/bookings';
+    case 'booking.cancelled_by_shop':
+    case 'shift.cancelled':
+    case 'account.penalty':
+      return '/worker/bookings?tab=history';
+    case 'account.suspended':
+      return '/worker';
+    case 'shift.seat_reopened':
+    case 'shift.priority_invite':
+    case 'shift.urgent_nearby':
+    case 'invite.received':
+      return shift ?? '/worker';
+    case 'kyc.reviewed':
+      return '/worker/profile';
+    case 'review.received':
+    case 'dispute.opened':
+    case 'dispute.resolved':
+      return shop ? '/shop/timesheets' : '/worker/bookings?tab=history';
+  }
+  if (data.payment_order_id) return shop ? '/shop/wallet' : '/worker/wallet';
+  if (shift) return shift;
+  if (data.booking_id) return shop ? '/shop' : '/worker/bookings';
   return null;
 }
 
