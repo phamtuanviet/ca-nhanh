@@ -1,36 +1,41 @@
-import { LogOut } from 'lucide-react';
 import type { Metadata } from 'next';
-import { signOut } from '@/app/(auth)/actions';
+import { redirect } from 'next/navigation';
+import { connection } from 'next/server';
+import { Suspense } from 'react';
 import { Logo } from '@/components/brand/logo';
-import { Badge } from '@/components/cn/badge';
-import { EmptyState } from '@/components/cn/empty-state';
-import { Button } from '@/components/ui/button';
+import { Skeleton } from '@/components/cn/skeleton';
+import { getSessionUser } from '@/lib/auth';
+import { ROLE_HOME } from '@/lib/roles';
+import { getPositions } from '@/lib/services/catalog';
+import { OnboardingForm } from './onboarding-form';
 
 export const metadata: Metadata = { title: 'Hoàn tất hồ sơ' };
 
-/** proxy.ts chỉ cho tài khoản đã đăng nhập nhưng chưa onboarding vào trang này */
+/** W2: chọn vai trò → hồ sơ (P1-08). proxy.ts chỉ cho tài khoản chưa onboarding vào đây. */
 export default function OnboardingPage() {
   return (
     <div className="flex min-h-dvh flex-col px-4 py-6">
       <Logo />
-      <main className="mx-auto flex w-full max-w-md flex-1 items-center">
-        <div className="w-full rounded-[var(--radius-card)] bg-surface shadow-[var(--shadow-card)]">
-          <EmptyState
-            illustration="shop-onboarding"
-            title="Hoàn tất hồ sơ để bắt đầu"
-            text="Chọn vai trò, nhập ngày sinh và kỹ năng (người làm) hoặc tạo quán (chủ quán). Tài khoản demo đã có hồ sơ sẵn."
-          >
-            <Badge tone="info" icon="clock">
-              Đang xây dựng · P1-08
-            </Badge>
-            <form action={signOut} className="mt-2">
-              <Button type="submit" variant="outline">
-                <LogOut aria-hidden /> Đăng xuất
-              </Button>
-            </form>
-          </EmptyState>
-        </div>
+      <main className="mx-auto w-full max-w-lg flex-1 py-8">
+        <Suspense fallback={<Skeleton shape="lines" lines={8} />}>
+          <OnboardingLoader />
+        </Suspense>
       </main>
     </div>
+  );
+}
+
+async function OnboardingLoader() {
+  await connection(); // form tính ngày sinh tối đa theo ngày hiện tại
+  const user = await getSessionUser();
+  if (!user) redirect('/login');
+  if (user.onboarded) redirect(ROLE_HOME[user.role]);
+  const positions = await getPositions();
+  return (
+    <OnboardingForm
+      fullName={user.fullName}
+      initialRole={user.role === 'shop_owner' ? 'shop_owner' : 'worker'}
+      positions={positions}
+    />
   );
 }
