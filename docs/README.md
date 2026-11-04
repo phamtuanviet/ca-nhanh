@@ -50,7 +50,7 @@ flowchart LR
 
 1. Đọc [SRS §2–§4](01-SRS.md) (mục tiêu, chức năng, quy tắc) và [kịch bản demo](02-Use-Cases-User-Stories.md) để hiểu đích đến.
 2. Chạy kiểm thử CSDL trên máy (cần Docker): `bash docs/sql/test/run_tests.sh`. Kết quả mong đợi: 92 dòng bắt đầu bằng `ok`, không có `CHECK FAILED`.
-3. Nhận task theo [kế hoạch lập trình](07-Implementation-Plan.md); mỗi task là một issue trên GitHub. Phase 0 dựng Next.js, Supabase (migration lấy từ `docs/sql/`, đẩy bằng Supabase CLI), CI và Vercel theo [HLD §9](03-System-Architecture-HLD.md).
+3. Chạy ứng dụng trên máy theo [07 §11](07-Implementation-Plan.md) (`npm run db:start`, `env:local`, `seed`, `dev`), rồi nhận task theo [kế hoạch lập trình](07-Implementation-Plan.md); mỗi task là một issue trên GitHub.
 4. Sinh kiểu TypeScript từ CSDL, rồi làm từng endpoint theo [API §3](05-API-Specification.md) với khuôn mẫu ở [API §10](05-API-Specification.md).
 5. Thiếu thời gian thì cắt phạm vi theo [07 §8](07-Implementation-Plan.md); phương án cuối là lộ trình rút gọn 2 tuần ở [02 §7](02-Use-Cases-User-Stories.md) (≈ 71 SP).
 
@@ -80,6 +80,6 @@ Các sơ đồ viết bằng **Mermaid**. GitHub hiển thị trực tiếp. Tro
 | Tài liệu 01–07 | Bản 1.0 để nhóm review |
 | Lược đồ CSDL + hàm nghiệp vụ | Đã viết, đã kiểm thử trên PostgreSQL 17 + PostGIS 3.5 (92/92) |
 | Hệ thiết kế | Xong: token, CSS component, hàm chuyển động, đặc tả component, asset trong `design/` |
-| Mã nguồn ứng dụng Next.js | Chưa bắt đầu; Phase 0 bắt đầu 05/11/2026 theo [07](07-Implementation-Plan.md) |
+| Mã nguồn ứng dụng Next.js | Phase 0 xong trên máy (Supabase cục bộ); chưa có dự án Supabase cloud và Vercel. Xem [07 §3](07-Implementation-Plan.md) |
 | Cần nhóm điền | `[Tên nhóm]`, tài khoản ngân hàng demo cho VietQR, khu vực/quận demo |
 | Cần kiểm chứng | Phí 20%, mức phạt, giả định thị trường: phỏng vấn 10–15 người ở cả hai phía (tuần 1 trong slide) |

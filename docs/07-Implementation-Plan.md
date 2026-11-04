@@ -94,7 +94,7 @@ Bí mật (`SUPABASE_SECRET_KEY`, `QR_SIGNING_SECRET`, `PAYMENT_WEBHOOK_SECRET`)
 | P0-02 | Khởi tạo Next.js tại gốc repo (TypeScript strict, App Router, Tailwind v4, ESLint, Prettier). Thư mục đã có `design/` nên tạo ở thư mục tạm rồi chép vào (§11). Thêm script `lint`, `typecheck`, `test`, `db:types` | FS | 0,5 ngày | `npm run build` thành công |
 | P0-03 | Gắn hệ thiết kế: chép `design/assets/*` vào `public/`; `globals.css` nạp `theme.css` + `components.css`; `next/font` (Be Vietnam Pro, Big Shoulders Display, subset `vietnamese` + `latin`); `next-themes`; metadata (icon, OG, manifest) + `viewport.themeColor`; trang `/dev/ui` hiện token và các lớp `cn-*` | FE-B | 1 ngày | `/dev/ui` giống trang hệ thiết kế ở cả hai theme |
 | P0-04 | shadcn/ui: khởi tạo (biến CSS đã ánh xạ sẵn trong `theme.css`), thêm button, input, label, form, dialog, sheet, tabs, select, sonner; biến thể `spark`, `ghost`, `danger` cho Button | FE-A | 0,5 ngày | Các component hiện đúng màu thương hiệu |
-| P0-05 | Supabase: tạo dự án *dev* và *demo* (Singapore); bật `postgis` (schema `extensions`), `btree_gist`, `pg_cron`; `npx supabase init`; chép `docs/sql/0001`–`0004` thành `supabase/migrations/2026110500000{1..4}_*.sql`; `supabase link` + `supabase db push` lên *dev*; Auth: email + mật khẩu, tắt xác nhận email cho demo, đặt Site URL | FS | 1 ngày | *dev* có 17 bảng, 53 hàm, job `ca-nhanh-tick`; `select fn_cron_tick()` chạy được |
+| P0-05 | Supabase: tạo dự án *dev* và *demo* (Singapore); bật `postgis` (schema `extensions`), `btree_gist`, `pg_cron`; `npx supabase init`; chép `docs/sql/0001`–`0004` thành `supabase/migrations/2026110400000{1..4}_*.sql`; `supabase link` + `supabase db push` lên *dev*; Auth: email + mật khẩu, tắt xác nhận email cho demo, đặt Site URL | FS | 1 ngày | *dev* có 17 bảng, 53 hàm, job `ca-nhanh-tick`; `select fn_cron_tick()` chạy được |
 | P0-06 | Client Supabase: `lib/supabase/client.ts` (trình duyệt), `server.ts` (`@supabase/ssr`, cookie), `admin.ts` (secret key, kèm `import 'server-only'`); `npm run db:types` sinh `lib/database.types.ts`; `.env.example` | FE-A | 0,5 ngày | Truy vấn thử `positions` từ server và client đều chạy |
 | P0-07 | Nền API: `lib/api.ts` (`handle`, `requireUser` theo vai trò, `request_id`), `lib/errors.ts` (47 mã, ánh xạ `P0001`), `lib/validators/`; endpoint `GET /health`, `GET /config`, `GET /positions`, `GET /me` | FS | 1 ngày | Unit test ánh xạ lỗi xanh; `curl /api/v1/health` trả 200 |
 | P0-08 | Đăng nhập (W1): `/login`, `/signup`, đăng xuất; điều hướng theo vai trò (middleware, ở Next.js 16 là `proxy.ts`); nút đăng nhập nhanh 4 tài khoản demo khi `DEMO_MODE=true` | FE-A | 1 ngày | Người làm mở `/shop` bị chuyển về `/worker`; đăng nhập nhanh hoạt động |
@@ -104,6 +104,8 @@ Bí mật (`SUPABASE_SECRET_KEY`, `QR_SIGNING_SECRET`, `PAYMENT_WEBHOOK_SECRET`)
 | P0-12 | Vercel: import repo, khai báo biến môi trường ([03 §9.2](03-System-Architecture-HLD.md)), bật Preview cho PR; thêm URL Vercel vào Redirect URLs của Supabase | QA | 0,5 ngày | `/api/v1/health` trên URL production trả 200 |
 
 **Thứ tự**: P0-02 phải xong trong buổi sáng ngày đầu, vì mọi việc khác cần khung Next.js. Sau đó P0-03, P0-04, P0-05, P0-11 chạy song song. P0-06, P0-07, P0-10 và P0-12 cần dự án Supabase của P0-05. P0-08 cần P0-06.
+
+**Trạng thái (04/11/2026)**: P0-02 → P0-11 đã làm trên nhánh `feat/p0-nen-mong` và kiểm tra trên Supabase cục bộ: 25 kịch bản trên trình duyệt (đăng nhập nhanh 3 vai trò, chặn sai vai trò, `?next=`, đăng ký → onboarding, hai theme), 26 unit test, 92/92 kiểm tra CSDL. Phần còn lại cần tài khoản của nhóm: tạo hai dự án Supabase *dev*/*demo* rồi `db push` và `seed` (phần cloud của P0-05, P0-10), import Vercel (P0-12), mời thành viên và tạo board (P0-01). Lệnh ở §11.
 
 **Tiêu chí kết thúc Phase 0**: URL production chạy; đăng nhập nhanh 3 vai trò, mỗi vai trò vào đúng khu vực; `/dev/ui` khớp hệ thiết kế; CI xanh, gồm 92/92 kiểm tra CSDL.
 
@@ -280,25 +282,28 @@ Không làm: check-in (P2-03), hủy ca (P2-07)
 
 ---
 
-## 11. Việc của ngày đầu tiên (05/11)
+## 11. Chạy dự án
+
+**Trên máy** (cần Node 22+ và Docker):
 
 ```bash
-# 1. Lấy mã về và tạo nhánh cho task đầu tiên
 git clone git@github.com:phamtuanviet/ca-nhanh.git && cd ca-nhanh
-git switch -c chore/p0-02-nextjs
-
-# 2. Khởi tạo Next.js ở thư mục tạm (create-next-app từ chối thư mục đã có design/ và README.md), rồi chép vào gốc repo
-npx create-next-app@latest /tmp/cn-web --ts --tailwind --eslint --app --import-alias "@/*" --use-npm --yes
-rsync -a --exclude .git --exclude node_modules --exclude README.md --exclude .gitignore /tmp/cn-web/ ./
 npm install
-
-# 3. Supabase: khởi tạo, chép migration đã kiểm thử, đẩy lên dự án dev
-npx supabase init
-mkdir -p supabase/migrations
-for n in 1 2 3 4; do f=$(ls docs/sql/000${n}_*.sql); cp "$f" "supabase/migrations/2026110500000${n}_$(basename "$f" | cut -d_ -f2-)"; done
-npx supabase link --project-ref <dev-project-ref>
-npx supabase db push
-
-# 4. Kiểm tra CSDL vẫn đạt 92/92 trước khi viết dòng code đầu tiên
-bash docs/sql/test/run_tests.sh | grep -c '^ok'
+npm run db:start     # Supabase cục bộ: API 127.0.0.1:55321, Studio :55323, Mailpit :55324 (cổng 553xx để không trùng dự án Supabase khác)
+npm run env:local    # sinh .env.local từ Supabase cục bộ, kèm khóa QR/webhook và DEMO_PASSWORD ngẫu nhiên
+npm run seed         # 1 admin, 2 chủ quán, 30 người làm, 6 quán, 60 ngày lịch sử
+npm run dev          # http://localhost:3000 → Đăng nhập → Đăng nhập nhanh
 ```
+
+Trước khi mở pull request: `npm run lint && npm run typecheck && npm test && npm run db:test`. Đổi SQL: tạo migration mới bằng `npx supabase migration new <tên>`, chạy `npm run db:reset` để áp lại, rồi `npm run db:types`.
+
+**Lên Supabase cloud** (dự án *dev*, làm lại với *demo*):
+
+```bash
+npx supabase login                                  # mở trình duyệt, đăng nhập tài khoản Supabase của nhóm
+npx supabase link --project-ref <dev-project-ref>
+npx supabase db push                                # áp 4 migration
+SEED_ENV_FILE=.env.dev npm run seed                 # .env.dev: NEXT_PUBLIC_SUPABASE_URL, SUPABASE_SECRET_KEY, DEMO_PASSWORD của dự án dev
+```
+
+Sau đó import repo vào Vercel, khai báo biến theo `.env.example` (giá trị của dự án *demo* cho Production, *dev* cho Preview), thêm URL Vercel vào *Authentication → URL Configuration* của Supabase, và đặt secret `APP_URL` cho workflow `keep-alive`.

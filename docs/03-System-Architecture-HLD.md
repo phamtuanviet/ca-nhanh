@@ -435,7 +435,7 @@ Ghi chú: `postgres_changes` kiểm tra RLS cho từng người đăng ký nên 
 2. *Database → Extensions*: bật `postgis` (schema `extensions`), `btree_gist`, `pg_cron`.
 3. *SQL Editor*: chạy lần lượt `docs/sql/0001_schema.sql` → `0002_functions.sql` → `0003_security.sql` → `0004_cron_realtime.sql`. Hoặc chép vào `supabase/migrations/` rồi chạy `supabase link` + `supabase db push`.
 4. *Authentication*: bật Email; với demo, tắt *Confirm email* (hoặc cấu hình SMTP Resend). Bật Google với Client ID/Secret từ Google Cloud Console, redirect `https://<project-ref>.supabase.co/auth/v1/callback`. Ở *URL Configuration*, đặt Site URL là URL Vercel và thêm URL preview.
-5. **Tài khoản demo**: script `scripts/seed-users.ts` dùng Admin API `auth.admin.createUser({ email, password, email_confirm: true, user_metadata: { role, full_name } })` cho 2 chủ quán và khoảng 30 người làm; gọi `fn_complete_onboarding` cho từng tài khoản; tạo quán; gán admin bằng `update profiles set role = 'admin' where id = '<uuid>'`.
+5. **Tài khoản demo**: `npm run seed` (`scripts/seed.ts`, đặt `SEED_ENV_FILE` để trỏ sang dự án khác) dùng Admin API `auth.admin.createUser({ email, password, email_confirm: true, user_metadata: { role, full_name } })` cho 2 chủ quán và khoảng 30 người làm; gọi `fn_complete_onboarding` cho từng tài khoản; tạo quán; gán admin bằng `update profiles set role = 'admin' where id = '<uuid>'`.
 6. Sinh dữ liệu: `select fn_demo_reset(60, 2000000);` (60 ngày lịch sử, mỗi quán có sẵn 2.000.000đ).
 7. **Vercel**: *Import* repo GitHub → khai báo biến môi trường ở bảng dưới → *Deploy*.
 8. Kiểm tra nhanh: `GET /api/v1/health`, đăng nhập nhanh, đăng ca trên laptop và thấy ca hiện trên điện thoại.
@@ -455,7 +455,7 @@ Ghi chú: `postgres_changes` kiểm tra RLS cho từng người đăng ký nên 
 ### 9.3 CI/CD
 
 - **Vercel**: push nhánh → Preview; merge `main` → Production.
-- **GitHub Actions `ci.yml`**: `pnpm lint && pnpm typecheck && pnpm test`, và job `db-test` chạy `bash docs/sql/test/run_tests.sh` (runner Ubuntu có sẵn Docker).
+- **GitHub Actions `ci.yml`**: job `web` chạy `npm run lint`, `typecheck`, `test`, `format:check`, `build`; job `db-test` kiểm `supabase/migrations` giống hệt `docs/sql`, rồi chạy `bash docs/sql/test/run_tests.sh` (runner Ubuntu có sẵn Docker) và yêu cầu đủ 92 kiểm tra.
 - **GitHub Actions `keep-alive.yml`**: gọi health check hai lần mỗi tuần để dự án Supabase không bị coi là không hoạt động. Lưu ý: GitHub có thể tắt workflow lập lịch nếu repo lâu không có hoạt động.
 
 ```yaml
