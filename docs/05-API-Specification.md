@@ -380,7 +380,7 @@ Query:
       "distance_m": 420, "position_code": "barista", "title": "Pha chế ca tối",
       "start_at": "2026-11-05T10:00:00Z", "end_at": "2026-11-05T15:00:00Z", "hourly_rate": 30000,
       "est_earning": 150000, "headcount": 2, "filled_count": 1, "is_urgent": false,
-      "favorites_only_until": null, "match_score": 0.812
+      "favorites_only_until": null, "match_score": 0.812, "shop_cover_url": "/photos/cafe-garden-960.webp"
     }
   ],
   "meta": { "page": 1, "limit": 20, "total": 1 }
@@ -394,7 +394,8 @@ Chỉ trả ca `open` chưa bắt đầu; ẩn ca của quán đã chặn ngư�
   "data": {
     "shift": { "id": "b3f1c2d4-…", "title": "Pha chế ca tối", "status": "full", "…": "…" },
     "shop": { "id": "5a1d6c2e-…", "name": "Cà phê Góc Phố", "rating_avg": 4.7, "lat": 21.0368, "lng": 105.7826, "address": "…" },
-    "viewer": { "my_booking_id": "e7a8b9c0-…", "is_favorite": true, "favorites_only_active": false },
+    "seats": [ { "full_name": "Nguyễn Văn Minh", "avatar_url": "/avatars/minh.svg" } ],
+    "viewer": { "my_booking_id": "e7a8b9c0-…", "my_booking_status": "confirmed", "is_favorite": true, "favorites_only_active": false },
     "bookings": [
       { "id": "e7a8b9c0-…", "worker": { "id": "0f9e8d7c-…", "full_name": "Nguyễn Văn Minh", "rating_avg": 4.8 },
         "status": "checked_in", "check_in_at": "2026-11-05T09:58:00Z", "check_in_distance_m": 23, "is_late": false }
@@ -402,7 +403,7 @@ Chỉ trả ca `open` chưa bắt đầu; ẩn ca của quán đã chặn ngư�
   }
 }
 ```
-`bookings` chỉ trả cho chủ quán và admin. `viewer` chỉ trả cho người làm.
+`bookings` chỉ trả cho chủ quán và admin. `viewer` chỉ trả cho người làm. `seats` là người đang giữ chỗ (để vẽ SeatSlots), ai xem ca cũng thấy. `shop.phone` chỉ có với chủ quán, admin và người đã nhận ca.
 
 #### `PATCH /shifts/{shiftId}`
 ```json
@@ -717,6 +718,7 @@ X-CN-Signature: sha256=5d1f0c9a…(hex)
 | `200 { "received": true, "status": "credited" }` | Ghi có thành công |
 | `200 { "received": true, "status": "duplicate" }` | Lệnh đã thành công trước đó (gửi lại) |
 | `200 { "received": true, "status": "unmatched" }` | Không tìm thấy mã tham chiếu; ghi log cho admin xử lý tay (trả 200 để cổng không gửi lại mãi) |
+| `200 { "received": true, "status": "ignored" }` | Sự kiện khác `payment.received` |
 | `401 INVALID_SIGNATURE` | Sai chữ ký hoặc timestamp quá hạn |
 
 ---

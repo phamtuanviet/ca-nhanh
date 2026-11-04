@@ -37,3 +37,43 @@
     outline-offset: 2px;
   }
 }
+
+/* Vé ca mới xuất hiện realtime: trượt vào và viền nghệ mờ dần (dùng keyframe cn-arrive của components.css) */
+.cn-ticket-wrap--arrive {
+  animation:
+    cn-arrive var(--cn-dur-sheet) var(--cn-ease-out) both,
+    cn-ticket-glow 1600ms var(--cn-ease-out) both;
+}
+@keyframes cn-ticket-glow {
+  0%,
+  30% {
+    filter: drop-shadow(0 0 1px var(--spark))
+      drop-shadow(0 0 12px color-mix(in oklch, var(--spark) 70%, transparent));
+  }
+  100% {
+    filter: var(--cn-ticket-shadow);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cn-ticket-wrap--arrive {
+    animation: none;
+  }
+}
+
+/* Leaflet: giữ bản đồ dưới header dính và menu trượt */
+.leaflet-container {
+  z-index: 0;
+  font: inherit;
+}
+
+/* Ghim vị trí quán trên bản đồ Leaflet */
+.cn-map-pin {
+  display: block;
+  width: 30px;
+  height: 30px;
+  border: 3px solid var(--surface);
+  border-radius: 50% 50% 50% 0;
+  background: var(--primary);
+  box-shadow: var(--shadow-pop);
+  transform: rotate(-45deg);
+}

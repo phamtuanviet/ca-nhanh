@@ -11,7 +11,7 @@
 | Tài liệu thiết kế 01–07 | Bản 1.0 |
 | CSDL: 17 bảng, 53 hàm, RLS, tác vụ định kỳ | Đã kiểm thử, đạt 92/92 |
 | Hệ thiết kế: màu, chữ, component, chuyển động, ảnh | Xong |
-| Ứng dụng Next.js | Phase 0 (nền móng) xong trên máy: đăng nhập, phân quyền theo vai trò, khung 3 khu vực, API nền, seed, CI. Chưa deploy |
+| Ứng dụng Next.js | Phase 0 và Phase 1 xong trên máy: nạp ví VietQR, đăng ca có ký quỹ, tìm ca, nhận ca an toàn khi tranh chỗ, realtime. Chưa deploy |
 
 ## Cấu trúc repo
 
@@ -72,6 +72,8 @@ npm run dev          # http://localhost:3000 → Đăng nhập → Đăng nhập
 |---|---|
 | `npm run lint`, `npm run typecheck`, `npm test` | ESLint, TypeScript, Vitest |
 | `npm run db:test` | 92 kiểm tra nghiệp vụ CSDL trong Docker (không cần Supabase) |
+| `npm run race` | 20 người làm cùng nhận chỗ cuối của một ca: phải ra đúng 1 × 201, 19 × 409 (cần server đang chạy) |
+| `npm run test:e2e` | Playwright: đăng ca → ca hiện realtime → nhận ca; hai người tranh chỗ (cần server đang chạy) |
 | `npm run db:reset`, `npm run db:types` | Áp lại migration, sinh lại `lib/database.types.ts` |
 
 Trang `/dev/ui` hiện toàn bộ token và component để kiểm tra giao diện ở hai theme. Đưa lên Supabase cloud và Vercel: [07 §11](docs/07-Implementation-Plan.md).

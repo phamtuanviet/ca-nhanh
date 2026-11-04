@@ -2,11 +2,26 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { Suspense } from 'react';
 import { NAV, isActive } from './nav-items';
 
-/** Thanh tab dưới của người làm (mobile-first, cài được như PWA) */
+/**
+ * Thanh tab dưới của người làm (mobile-first, cài được như PWA).
+ * usePathname() là dữ liệu URL ở route động nên nằm sau Suspense; lúc chờ thì chưa tô mục nào.
+ */
 export function WorkerTabBar() {
-  const pathname = usePathname();
+  return (
+    <Suspense fallback={<TabBar pathname={null} />}>
+      <ActiveTabBar />
+    </Suspense>
+  );
+}
+
+function ActiveTabBar() {
+  return <TabBar pathname={usePathname()} />;
+}
+
+function TabBar({ pathname }: { pathname: string | null }) {
   return (
     <nav
       aria-label="Điều hướng chính"
@@ -14,7 +29,7 @@ export function WorkerTabBar() {
     >
       <ul className="mx-auto grid max-w-xl grid-cols-4">
         {NAV.worker.map(({ href, label, Icon }) => {
-          const active = isActive(pathname, href, '/worker');
+          const active = pathname !== null && isActive(pathname, href, '/worker');
           return (
             <li key={href}>
               <Link

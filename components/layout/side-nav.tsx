@@ -3,26 +3,34 @@
 import { Menu } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useState } from 'react';
+import { Suspense, useState } from 'react';
 import { Logo } from '@/components/brand/logo';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import type { Area } from '@/lib/roles';
 import { AREA_TITLE, NAV, isActive } from './nav-items';
 
-function NavLinks({
-  area,
-  onNavigate,
-}: {
-  area: Exclude<Area, 'worker'>;
-  onNavigate?: () => void;
-}) {
-  const pathname = usePathname();
+type NavProps = { area: Exclude<Area, 'worker'>; onNavigate?: () => void };
+
+/** usePathname() là dữ liệu URL ở route động nên nằm sau Suspense; lúc chờ thì chưa tô mục nào */
+function NavLinks(props: NavProps) {
+  return (
+    <Suspense fallback={<NavList {...props} pathname={null} />}>
+      <ActiveNavList {...props} />
+    </Suspense>
+  );
+}
+
+function ActiveNavList(props: NavProps) {
+  return <NavList {...props} pathname={usePathname()} />;
+}
+
+function NavList({ area, onNavigate, pathname }: NavProps & { pathname: string | null }) {
   const home = `/${area}`;
   return (
     <ul className="grid gap-1">
       {NAV[area].map(({ href, label, Icon }) => {
-        const active = isActive(pathname, href, home);
+        const active = pathname !== null && isActive(pathname, href, home);
         return (
           <li key={href}>
             <Link

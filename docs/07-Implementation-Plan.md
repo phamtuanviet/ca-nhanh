@@ -180,6 +180,15 @@ Phụ thuộc chính: P1-09 và P1-10 cần P1-05, P1-06 (giao diện làm trư�
 4. Lighthouse mobile trang `/worker`: LCP < 2,5 s, CLS < 0,1.
 5. CI xanh: unit, E2E, 92/92 kiểm tra CSDL.
 
+**Trạng thái (04/11/2026)**: P1-01 → P1-18 đã làm trên nhánh `feat/p1-vong-cho`, kiểm tra trên Supabase cục bộ với bản build production:
+- 47 kiểm tra API bằng curl theo Gherkin 6.1–6.3 (nạp ví, webhook gửi lại, đăng ca, thiếu tiền, tìm ca, nhận ca, trùng giờ, phân quyền) và kiểm tra onboarding (dưới 18 tuổi, metadata `role=admin`).
+- Kịch bản trình duyệt 3 vai (chị Lan, Minh, An): ca mới hiện trên 2 máy người làm sau khoảng 0,8 giây kể từ lúc bấm *Đăng ca*; hai người cùng bấm nhận chỗ cuối thì đúng một người được, người kia thấy *Ca vừa đủ người*; trang của quán cập nhật 1/1 và hiện toast mà không tải lại.
+- `npm run race`: 20 yêu cầu song song cho đúng 1 × 201 và 19 × 409 `SHIFT_FULL`. Playwright (`npm run test:e2e`) 2 kịch bản, đạt 5/5 lần chạy liên tiếp.
+- Lighthouse mobile `/worker`: điểm 99–100, LCP 1,4–1,5 s, CLS 0,011.
+- 60 unit test (tiền khớp SQL ở 12 bộ số, VietQR, chữ ký webhook, mã lỗi).
+
+Chưa làm được: tiêu chí 1 trên URL production và P1-19 với điện thoại thật, vì chưa có dự án Supabase cloud và Vercel (§11). Thay vào đó, kịch bản đã chạy trên server production cục bộ với 3 trình duyệt. Kênh `my-bookings`, `wallet` của người làm và bản đồ ca để sang Phase 2–3.
+
 ---
 
 ## 5. Phase 2 — Chấm công và tiền (16–21/11)
