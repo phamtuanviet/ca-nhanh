@@ -44,3 +44,9 @@ Thumbs.db
 
 # Claude Code: thiết lập riêng từng máy
 .claude/settings.local.json
+
+# Asset chép từ design/assets khi chạy dev/build (scripts/sync-assets.mjs)
+/public/brand/
+/public/photos/
+/public/illustrations/
+/public/avatars/
