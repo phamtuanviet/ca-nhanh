@@ -19,6 +19,7 @@ export type PlatformSettings = {
   auto_approve_after_hours: number;
   suspension_threshold: number;
   suspension_days: number;
+  penalty_window_days: number;
   shop_cancel_compensation_rate: number;
   penalty_points: { cancel_lt_24h: number; cancel_lt_6h: number; no_show: number };
   demo_mode: { enabled: boolean; auto_verify: boolean; skip_geofence: boolean };
@@ -51,6 +52,7 @@ export async function getSettings(): Promise<PlatformSettings> {
     auto_approve_after_hours: num('auto_approve_after_hours', 12),
     suspension_threshold: num('suspension_threshold', 4),
     suspension_days: num('suspension_days', 7),
+    penalty_window_days: num('penalty_window_days', 30),
     shop_cancel_compensation_rate: num('shop_cancel_compensation_rate', 0.5),
     penalty_points: {
       cancel_lt_24h: Number(penalty.cancel_lt_24h ?? 1),
