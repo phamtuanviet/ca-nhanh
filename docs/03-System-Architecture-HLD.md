@@ -536,7 +536,7 @@ jobs:
 | ADR-06 | Ví nội bộ + VietQR giả lập | Tích hợp cổng thật ngay | Không cần giấy phép, demo ổn định | Phải nói rõ là mô phỏng; có sẵn adapter để chuyển |
 | ADR-07 | pg_cron thay cron của Vercel | Vercel Cron, GitHub Actions | Chạy mỗi phút, ngay trong CSDL, miễn phí | Logic lập lịch nằm trong SQL |
 | ADR-08 | Realtime bằng `postgres_changes` | Polling, WebSocket tự dựng | Có sẵn, tôn trọng RLS | Cần Broadcast khi tải lớn |
-| ADR-09 | PWA thay app native | React Native, Flutter | Một mã nguồn, không qua kho ứng dụng | Web Push trên iOS cần cài PWA trước |
+| ADR-09 | PWA thay app native; Android đóng gói bằng Trusted Web Activity (`npm run android:build`) | React Native, Flutter | Một mã nguồn; có file APK/AAB cho Android mà không viết lại; iPhone dùng *Thêm vào MH chính* | Web Push trên iOS cần cài PWA trước; bản iOS trên App Store cần máy Mac và tài khoản Apple |
 | ADR-10 | Tạm giữ theo từng chỗ (`seat_hold`) | Chỉ giữ tổng theo ca | Hoàn tiền đúng khi có người hủy, vắng mặt hoặc khiếu nại | Thêm một cột, nhưng bất biến rõ ràng |
 
 ---

@@ -50,3 +50,7 @@ Thumbs.db
 /public/photos/
 /public/illustrations/
 /public/avatars/
+
+# App Android (TWA) sinh bởi scripts/android-twa.mjs: dự án Gradle, khóa ký, mật khẩu, APK.
+# Khóa ký và keystore.env tuyệt đối không commit; sao lưu riêng.
+/android/

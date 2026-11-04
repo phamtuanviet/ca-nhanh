@@ -74,6 +74,7 @@ npm run dev          # http://localhost:3000 → Đăng nhập → Đăng nhập
 | `npm run db:test` | 103 kiểm tra nghiệp vụ CSDL trong Docker (không cần Supabase) |
 | `npm run race` | 20 người làm cùng nhận chỗ cuối của một ca: phải ra đúng 1 × 201, 19 × 409 (cần server đang chạy) |
 | `npm run test:e2e` | Playwright: đăng ca → ca hiện realtime → nhận ca; hai người tranh chỗ; kiosk QR → check-in → tua giờ → check-out → duyệt → ví → rút; hủy sát giờ; trọn kịch bản demo 5 phút (cần server đang chạy) |
+| `npm run android:build` | Đóng gói PWA thành app Android (APK/AAB) bằng Bubblewrap; cần `APP_HOST` đã deploy HTTPS ([07 §11](docs/07-Implementation-Plan.md)) |
 | `npm run ledger:check` | Kiểm bất biến tiền I1–I5 (04 §6.3) trên CSDL đang chạy: tổng tiền, tạm giữ khớp ca, số dư khớp sổ cái |
 | `npm run db:reset`, `npm run db:types` | Áp lại migration, sinh lại `lib/database.types.ts` |
 

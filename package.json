@@ -23,7 +23,8 @@
     "seed": "tsx scripts/seed.ts",
     "race": "tsx scripts/race-booking.ts",
     "test:e2e": "playwright test",
-    "ledger:check": "tsx scripts/check-ledger.ts"
+    "ledger:check": "tsx scripts/check-ledger.ts",
+    "android:build": "node scripts/android-twa.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^7.0.2",
