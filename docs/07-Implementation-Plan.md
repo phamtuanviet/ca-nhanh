@@ -324,6 +324,8 @@ npm run dev          # http://localhost:3000 → Đăng nhập → Đăng nhập
 
 Trước khi mở pull request: `npm run lint && npm run typecheck && npm test && npm run db:test`. Đổi SQL: tạo migration mới bằng `npx supabase migration new <tên>`, chạy `npm run db:reset` để áp lại, rồi `npm run db:types`.
 
+**Bản đang chạy (05/11/2026)**: https://ca-nhanh.vercel.app (Vercel, hàm ở `sin1` Singapore theo `vercel.json`) + Supabase cloud dự án `ca-nhanh` (`clzqpysayhhxkfmmxjip`, `ap-southeast-1`). Đã: áp 5 migration, seed, pg_cron chạy mỗi phút, cấu hình Auth bằng `npx supabase config push --remote` (khối `[remotes.cloud]` trong `supabase/config.toml`: Site URL, tắt xác nhận email), 14 biến môi trường Production trên Vercel, Playwright 5 kịch bản đạt trên production (`E2E_BASE_URL=https://ca-nhanh.vercel.app SEED_ENV_FILE=.env.cloud npx playwright test`), APK Android trỏ vào tên miền này. Biến và mật khẩu CSDL của bản cloud nằm ở `.env.cloud` trên máy người deploy (không commit). Deploy lại: `npx vercel deploy --prod` từ nhánh `main` (chưa nối Git tự động). Sau khi chạy kiểm thử trên production, reset dữ liệu: *Admin → Demo → Reset dữ liệu demo*.
+
 **Lên Supabase cloud** (dự án *dev*, làm lại với *demo*):
 
 ```bash

@@ -11,7 +11,7 @@
 | Tài liệu thiết kế 01–07 | Bản 1.0 |
 | CSDL: 17 bảng, 53 hàm, RLS, tác vụ định kỳ | Đã kiểm thử, đạt 103/103 |
 | Hệ thiết kế: màu, chữ, component, chuyển động, ảnh | Xong |
-| Ứng dụng Next.js | Phase 0–3 xong trên máy: nạp ví VietQR, đăng ca có ký quỹ, tìm ca, nhận ca an toàn khi tranh chỗ, realtime; kiosk QR, check-in/out có geofence, duyệt giờ công và quyết toán ngay, ví người làm và rút tiền, hủy ca và điểm phạt, công cụ tua giờ demo; bản đồ ca, đánh giá hai chiều, dashboard KPI, trang quản trị, mời người quen, đẩy ca gấp, hồ sơ năng lực, PWA. Chưa deploy |
+| Ứng dụng Next.js | Phase 0–3 xong trên máy: nạp ví VietQR, đăng ca có ký quỹ, tìm ca, nhận ca an toàn khi tranh chỗ, realtime; kiosk QR, check-in/out có geofence, duyệt giờ công và quyết toán ngay, ví người làm và rút tiền, hủy ca và điểm phạt, công cụ tua giờ demo; bản đồ ca, đánh giá hai chiều, dashboard KPI, trang quản trị, mời người quen, đẩy ca gấp, hồ sơ năng lực, PWA, app Android (TWA). Đã deploy: https://ca-nhanh.vercel.app (Supabase cloud Singapore) |
 
 ## Cấu trúc repo
 
