@@ -48,6 +48,6 @@ export async function proxy(request: NextRequest) {
 export const config = {
   // Bỏ qua API (tự xác thực trong Route Handler), file tĩnh và asset
   matcher: [
-    '/((?!api/|_next/static|_next/image|brand/|photos/|illustrations/|avatars/|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|avif|ico|webmanifest|txt)$).*)',
+    '/((?!api/|_next/static|_next/image|brand/|photos/|illustrations/|avatars/|favicon.ico|sw.js|offline|\\.well-known/|.*\\.(?:svg|png|jpg|jpeg|gif|webp|avif|ico|webmanifest|txt)$).*)',
   ],
 };

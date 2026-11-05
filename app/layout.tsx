@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next';
 import { Be_Vietnam_Pro, Big_Shoulders } from 'next/font/google';
 import { Providers } from '@/components/providers';
+import { ServiceWorkerRegister } from '@/components/sw-register';
 import './globals.css';
 
 // Chỉ tải phần chữ tiếng Việt và Latin. Big Shoulders là font biến thiên có trục opsz:
@@ -35,6 +36,8 @@ export const metadata: Metadata = {
     apple: '/brand/apple-touch-icon.png',
   },
   manifest: '/brand/manifest.webmanifest',
+  // iPhone: "Thêm vào màn hình chính" mở toàn màn hình như app
+  appleWebApp: { capable: true, title: 'Ca Nhanh', statusBarStyle: 'default' },
   openGraph: {
     type: 'website',
     locale: 'vi_VN',
@@ -53,6 +56,7 @@ export default function RootLayout({ children }: LayoutProps<'/'>) {
     <html lang="vi" suppressHydrationWarning className={`${sans.variable} ${display.variable}`}>
       <body>
         <Providers>{children}</Providers>
+        <ServiceWorkerRegister />
       </body>
     </html>
   );

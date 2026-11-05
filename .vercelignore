@@ -1,0 +1,11 @@
+# Không tải lên Vercel: biến môi trường cục bộ (Vercel dùng biến khai báo trên dự án), khóa ký app Android,
+# kết quả build và kiểm thử cục bộ
+.env*
+!.env.example
+android/
+.next/
+node_modules/
+test-results/
+playwright-report/
+supabase/.temp/
+supabase/.branches/
